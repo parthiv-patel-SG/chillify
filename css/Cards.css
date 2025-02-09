@@ -1,0 +1,205 @@
+/* General Page Styling */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* Theme Variables */
+:root {
+  --bg-color: #f4f4f4;
+  --text-color: #333;
+  --card-bg: #fff;
+  --card-text: #212530;
+  --button-bg: #444;
+  --button-hover: #63666d;
+}
+
+/* Dark Mode */
+.dark-mode {
+  --bg-color: #222;
+  --text-color: #f4f4f4;
+  --card-bg: #333;
+  --card-text: #fff;
+  --button-bg: #555;
+  --button-hover: #777;
+}
+
+/* Gothic Mode */
+.gothic-mode {
+  --bg-color: #1a1a1a;
+  --text-color: #b30000;
+  --card-bg: #2b2b2b;
+  --card-text: #b30000;
+  --button-bg: #660000;
+  --button-hover: #990000;
+}
+
+/* Apply Theme Variables */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.card-container .card {
+  background-color: var(--card-bg);
+  color: var(--card-text);
+}
+
+/* Navigation Menu */
+#menu {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  padding: 15px;
+  background-color: var(--button-bg);
+  width: 100%;
+}
+
+#menu button {
+  background-color: var(--button-bg);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+#menu button:hover {
+  background-color: var(--button-hover);
+}
+
+/* Theme Button */
+#theme-button {
+  padding: 8px 15px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: var(--button-bg);
+  color: white;
+  transition: background 0.3s;
+}
+
+#theme-button:hover {
+  background-color: var(--button-hover);
+}
+
+/* Card Layout */
+.card-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 40%;
+  margin: 20px auto;
+  flex-wrap: wrap;
+  padding: 0 20px;
+}
+
+.card-container .card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--card-bg);
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 45%;
+  box-sizing: border-box;
+}
+
+/* Card Images */
+.card img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .card-container {
+    width: 90%;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card-container .card {
+    width: 100%;
+  }
+}
+
+.card:hover {
+  background-color: #63666d; /* Keeps your current hover background */
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.6); /* Soft glow effect */
+  border: 2px solid #fff; /* Highlighted border */
+  transform: scale(1.05); /* Slight zoom effect */
+  transition: all 0.3s ease-in-out; /* Smooth transition */
+}
+
+/* Light Mode */
+.light-mode .card {
+  background-color: #fff;
+  color: #212530;
+}
+
+/* Dark Mode */
+.dark-mode .card {
+  background-color: #333;
+  color: #e9eaec;
+}
+
+/* Gothic Mode */
+.gothic-mode .card {
+  background-color: #2c2c2c;
+  color: #f0f0f0;
+}
+
+#theme-container {
+  display: flex;
+  justify-content: flex-end; /* Pushes content to the right */
+  align-items: center;
+  gap: 10px; /* Adds some space between the text and button */
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  position: relative;
+}
+
+
+h1 {
+  position: relative;
+  display: inline-block;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, rgba(53, 1, 1, 0.2) 25%, transparent 25%, transparent 50%, rgba(215, 204, 204, 0.2) 50%, rgba(37, 10, 80, 0.2) 75%, transparent 75%, transparent);
+  background-size: 40px 40px;
+  color: red;
+  font-size: 2rem;
+  text-align: center;
+  text-transform: uppercase;
+  border-radius: 8px;
+  z-index: 1;
+}
+
+header p {
+  font-size: 1.2rem;
+  color: #b31717;  /* Light color for readability */
+  /* background-color: #1a1a1a; */
+  margin-top: 10px;
+  text-align: center;  /* Center-align the text */
+  max-width: 80%;  /* Limit width to avoid it stretching too far */
+  line-height: 1.5;  /* Line height for better spacing */
+  font-weight: 300;  /* Lighter font weight for a relaxed look */
+}
