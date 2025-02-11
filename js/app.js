@@ -88,6 +88,8 @@ function updateActiveNavButton(selectedButton) {
 
   // Add 'active' class to the clicked button
   selectedButton.classList.add("active");
+   // Scroll the navbar so the selected button is visible
+   selectedButton.scrollIntoView({ behavior: "smooth", inline: "center" });
 }
 
 // Example usage: Call this function when switching views
@@ -97,6 +99,13 @@ document.querySelectorAll("#menu button").forEach(button => {
   });
 });
   }
+ // force Start the scroll bar from the first button
+  document.addEventListener("DOMContentLoaded", function () {
+    const menu = document.getElementById("menu");
+  
+    // Scrolls to the first button on load
+    menu.scrollLeft = 0;
+  });
   
 
   // Function to create a song card

@@ -55,14 +55,22 @@ body {
 /* Navigation Menu */
 #menu {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   position: relative;
-  gap: 15px;
+  gap: 10px;
   z-index: 10;
-  padding: 15px;
+  /* padding: 15px; */
   background-color: var(--button-bg);
   width: 100%;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  white-space: nowrap; /* Prevent buttons from wrapping */
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #888 transparent; /* Custom scrollbar color */
+  scroll-behavior: smooth; /* Smooth scrolling */
+  scroll-padding-left: 0px;
+  -webkit-overflow-scrolling: touch; /* for mobile */
+  scrollbar-width: none; 
 }
 
 #menu button {
@@ -78,6 +86,8 @@ body {
   z-index: 10;
   opacity: 1;
   border: 2px solid #30302f;
+  flex-shrink: 0; /* Prevent buttons from shrinking */
+  margin-right: 5px; /* Space between buttons */
 }
 #menu button:hover {
   color: #27201e; /* Change text color */
@@ -97,6 +107,19 @@ body {
 body.dark-mode #menu {
   background-color: #333; /* Dark background color */
   color: #fff; /* Light text for contrast */
+}
+
+/* scroll bar settings */
+#menu::-webkit-scrollbar {
+ display : none
+}
+
+#menu::-webkit-scrollbar-thumb {
+  background: #888; /* Color of the scroll thumb */
+  border-radius: 10px;
+}
+#menu::-webkit-scrollbar-track {
+  background: transparent; /* Hide track background */
 }
 
 /* #menu button:hover {
