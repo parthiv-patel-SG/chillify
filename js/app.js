@@ -14,6 +14,13 @@ document.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add(`${currentTheme}-mode`);
   themeNameDisplay.textContent = capitalizeFirstLetter(currentTheme);
 
+  // Create buttons for all songs in nav-bar.
+  const showAllSongsButton = document.createElement("button");
+  showAllSongsButton.textContent = "All Songs";
+  showAllSongsButton.addEventListener("click", displayAllSongs);
+  artistMenu.appendChild(showAllSongsButton);
+
+
   // Create buttons for each artist in the navigation menu
   artists.forEach((artist) => {
     const button = document.createElement("button");
@@ -21,9 +28,37 @@ document.addEventListener("DOMContentLoaded", () => {
     button.addEventListener("click", () => displayArtistData(artist));
     artistMenu.appendChild(button);
   });
+  // Button for explicit songs.
+  const showExplicitSongsButton = document.createElement("button");
+  showExplicitSongsButton.textContent = "Explicit";
+  showExplicitSongsButton.addEventListener("click", displayExplicitSongs);
+  artistMenu.appendChild(showExplicitSongsButton);
 
-  // Display songs for the first artist by default
-  displayArtistData(artists[0]);
+  // Function to display all songs
+function displayAllSongs() {
+  // Update the selected artist title to "All Songs"
+  selectedArtistTitle.innerHTML = "All Songs";
+
+  // Clear the current cards
+  cardContainer.innerHTML = "";
+ 
+  // Filter songs that are not explicit and have a non-null image URL
+  const filteredSongs = songs.filter((song) =>!song.explicit && song.imgurl);
+
+  // Loop through all songs and create a card for each one
+  filteredSongs.forEach((song) => {
+    const card = createSongCard(song);
+    cardContainer.appendChild(card);
+  });
+
+  // Apply random colors to the cards based on the current theme
+  applyCardColors(currentTheme);
+}
+
+// Display all songs as default
+ displayAllSongs();
+  // // Display songs for the first artist by default
+  // displayArtistData(artists[0]);
 
   // Function to display artist data and songs as cards
   function displayArtistData(artist) {
@@ -41,6 +76,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     applyCardColors(currentTheme);
   }
+
+  // Function to update active button in navbar
+  {
+function updateActiveNavButton(selectedButton) {
+  // Get all buttons inside the menu
+  const navButtons = document.querySelectorAll("#menu button");
+
+  // Remove 'active' class from all buttons
+  navButtons.forEach(button => button.classList.remove("active"));
+
+  // Add 'active' class to the clicked button
+  selectedButton.classList.add("active");
+}
+
+// Example usage: Call this function when switching views
+document.querySelectorAll("#menu button").forEach(button => {
+  button.addEventListener("click", function () {
+    updateActiveNavButton(this);
+  });
+});
+  }
+  
 
   // Function to create a song card
   function createSongCard(song) {
@@ -89,6 +146,61 @@ document.addEventListener("DOMContentLoaded", () => {
       card.style.border = `2px solid ${getRandomColor(theme)}`;
     });
   }
+
+  // / Function to display explicit songs with a warning
+  function displayExplicitSongs() {
+    const userConfirmed = window.confirm("Warning: Explicit content ahead. These songs may be harmful or inappropriate for some users. Do you wish to continue?");
+    
+    if (userConfirmed) {
+      selectedArtistTitle.innerHTML = "Explicit Songs";
+      cardContainer.innerHTML = "";
+
+      // Filter songs to show only explicit ones
+      const explicitSongs = songs.filter((song) => song.explicit);
+
+      // Create and display cards for each explicit song
+      explicitSongs.forEach((song) => {
+        const card = createSongCard(song);
+        cardContainer.appendChild(card);
+      });
+
+      // Apply random colors to the cards based on the current theme
+      applyCardColors(currentTheme);
+    } else {
+      // If the user cancels, you can show an alert or return
+      alert("You have canceled the explicit content display.");
+    }
+  }
+   // Search functionality
+   searchBar.addEventListener("input", () => {
+    const query = searchBar.value.toLowerCase().trim(); // Get the trimmed search query
+
+    // Clear the current cards
+    cardContainer.innerHTML = "";
+
+    // If the search bar is empty, show all songs
+    if (query === "") {
+      displayAllSongs();
+      return;
+    }
+
+    // Filter songs based on the query
+    const filteredSongs = songs.filter((song) => {
+      const songTitle = song.title.toLowerCase();
+      const artistName = artists.find(artist => artist.artistId === song.artistId).name.toLowerCase();
+      
+      return songTitle.includes(query) || artistName.includes(query);
+    });
+
+    // Display the filtered songs
+    filteredSongs.forEach((song) => {
+      const card = createSongCard(song);
+      cardContainer.appendChild(card);
+    });
+
+    // Apply random colors to the cards based on the current theme
+    applyCardColors(currentTheme);
+  });
 
   // Theme change handler
   themeButton.addEventListener("click", () => {

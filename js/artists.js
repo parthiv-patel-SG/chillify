@@ -37,5 +37,29 @@ window.artists = [
       { url: "https://www.instagram.com/sammyrash/?hl=en", name: "Instagram" },
       { url: "https://sammyrash.myshopify.com/", name: "merchandise" }
     ]
-  }
+  },
+{
+  artistId: "AID-1005",
+  name: "Honey Singh",
+  urls: [
+    { url: "https://www.instagram.com/yoyohoneysingh/?hl=en", name: "Instagram" },
+    { url: "https://www.youtube.com/channel/UC1KonH1j8WMhc5cT6Bp7NtA", name: "Youtube" }
+  ]
+},
+{
+  artistId: "AID-1006",
+  name: "Dino James",
+  urls: [
+    { url: "https://www.instagram.com/dinojms/?hl=en", name: "Instagram" },
+    { url: "https://www.youtube.com/channel/UCtpDorOuxwQ1URGQ0WLIXmQ", name: "Youtube" }
+  ]
+},
+{
+  artistId: "AID-1007",
+  name: "BCS Ragasur",
+  urls: [
+    { url: "https://www.instagram.com/ragasur/?hl=en", name: "Instagram" },
+    { url: "https://www.youtube.com/channel/UCayK66t_pe3iEPJPis46oGQ", name: "Youtube" }
+  ]
+}
 ];

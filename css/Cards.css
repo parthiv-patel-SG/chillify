@@ -1,3 +1,7 @@
+html {
+  scroll-behavior: smooth;
+}
+
 /* General Page Styling */
 body {
   font-family: Arial, sans-serif;
@@ -52,7 +56,10 @@ body {
 #menu {
   display: flex;
   justify-content: center;
+  align-items: center;
+  position: relative;
   gap: 15px;
+  z-index: 10;
   padding: 15px;
   background-color: var(--button-bg);
   width: 100%;
@@ -63,14 +70,62 @@ body {
   color: white;
   border: none;
   padding: 10px 15px;
+  margin: 5px;
+  font-size: 16px;
   cursor: pointer;
   border-radius: 5px;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
+  z-index: 10;
+  opacity: 1;
+  border: 2px solid #30302f;
+}
+#menu button:hover {
+  color: #27201e; /* Change text color */
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  /* transition: color 0.3s ease-in-out; */
+    /* border-bottom: 2px solid white; */
+}
+#menu button.active {
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-#menu button:hover {
-  background-color: var(--button-hover);
+/* Dark Mode Navbar Background */
+body.dark-mode #menu {
+  background-color: #333; /* Dark background color */
+  color: #fff; /* Light text for contrast */
 }
+
+/* #menu button:hover {
+  background-color: var(--button-hover);
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+Slide-in effect for navBar
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+#menu button {
+  animation: slideIn 1s ease-out forwards;
+  animation-delay: 1s;
+}
+
+#menu button:nth-child(1) {
+  animation-delay: 1.2s;
+}
+
+#menu button:nth-child(2) {
+  animation-delay: 1.4s;
+} */
 
 /* Theme Button */
 #theme-button {
@@ -203,3 +258,47 @@ header p {
   line-height: 1.5;  /* Line height for better spacing */
   font-weight: 300;  /* Lighter font weight for a relaxed look */
 }
+
+/* Fade-in effect for header section */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+h1, p {
+  animation: fadeIn 2s ease-out;
+}
+
+/* Hover Effect for theme button */
+#theme-button {
+  transition: all 0.3s ease;
+}
+
+#theme-button:hover {
+  background-color: #4d0a0c;  /* Changes to a yellowish color */
+  transform: scale(1.1); /* Slightly increases size */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);  /* Adds shadow */
+}
+
+/* 
+Pulse effect for title */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+h1 {
+  animation: pulse 1.5s infinite;
+}
+

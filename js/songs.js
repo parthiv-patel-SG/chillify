@@ -47,10 +47,7 @@ window.songs = [
       explicit: false,
       imgurl: "js/images/img-1.webp"
     },
-    // Add imgurl field to all other songs similarly
-
-  
-  {
+    {
     songId: "SID-2005",
     artistId: "AID-1001",
     title: "The Start",
@@ -171,7 +168,7 @@ window.songs = [
     year: "2024",
     duration: 134,
     url: "https://www.youtube.com/watch?v=gb9EujBCLv4",
-    explicit: true,
+    explicit: false,
     imgurl: "js/images/img-3.jpg"
 
   },
@@ -182,7 +179,7 @@ window.songs = [
     year: "2023",
     duration: 188,
     url: "https://www.youtube.com/watch?v=n51owF7eV1c",
-    explicit: true,
+    explicit: false,
     imgurl: "js/images/img-2.jpg"
 
   },
@@ -250,7 +247,7 @@ window.songs = [
     year: "2023",
     duration: 115,
     url: "https://www.youtube.com/watch?v=ezCeJ8fVHCk",
-    explicit: true,
+    explicit: false,
     imgurl: "js/images/img-3.jpg"
 
   },
@@ -264,5 +261,170 @@ window.songs = [
     explicit: false,
     imgurl: "js/images/img-1.webp"
 
-  }
+  },
+  // Dino James
+  {
+    songId: "SID-6001",
+    artistId: "AID-1006",
+    title: "Girlfriend",
+    year: "2017",
+    duration: 235,
+    url: "https://www.youtube.com/watch?v=0woU5uXWkW4&rco=1",
+    explicit: true,
+    imgurl: "js/images/img-4.jpg"
+  },
+  {
+    songId: "SID-6002",
+    artistId: "AID-1006",
+    title: "Achhi maxa aayi",
+    year: "2019",
+    duration: 256,
+    url: "https://www.youtube.com/watch?v=FCRI4Xw7Xwg",
+    explicit: true,
+    imgurl: "js/images/img-2.jpg"
+  },
+  {
+    songId: "SID-6003",
+    artistId: "AID-1006",
+    title: "Loser",
+    year: "2017",
+    duration: 248,
+    url: "https://www.youtube.com/watch?v=I63RkFdgjos",
+    explicit: false,
+    imgurl: "js/images/img-3.jpg"
+  },
+  {
+    songId: "SID-6004",
+    artistId: "AID-1006",
+    title: "Tandav",
+    year: "2019",
+    duration: 232,
+    url: "https://www.youtube.com/watch?v=bWwwWnNh8I0",
+    explicit: false,
+    imgurl: "js/images/img-1.webp"
+  },
+{
+  songId: "SID-6005",
+  artistId: "AID-1006",
+  title: "Wishlist",
+  year: "2020",
+  duration: 251,
+  url: "https://www.youtube.com/watch?v=hFGG7T3Mq3w",
+  explicit: false,
+  imgurl: "js/images/img-4.jpg"
+
+},
+// BCS Ragasur
+{
+  songId: "SID-7001",
+  artistId: "AID-1007",
+  title: "Haan ya naa ",
+  year: "2018",
+  duration: 235,
+  url: "https://www.youtube.com/watch?v=UMMyRg3y7yU",
+  explicit: false,
+  imgurl: "js/images/img-4.jpg"
+},
+{
+  songId: "SID-7002",
+  artistId: "AID-1007",
+  title: "Teri choodiyon Ki",
+  year: "2019",
+  duration: 256,
+  url: "https://www.youtube.com/watch?v=-6_7NywjE6I",
+  explicit: true,
+  imgurl: "js/images/img-2.jpg"
+},
+{
+  songId: "SID-7003",
+  artistId: "AID-1007",
+  title: "Lag gaye",
+  year: "2019",
+  duration: 248,
+  url: "https://www.youtube.com/watch?v=yUuCV_goiNI",
+  explicit: true,
+  imgurl: "js/images/img-3.jpg"
+},
+{
+  songId: "SID-7004",
+  artistId: "AID-1007",
+  title: "KLPD",
+  year: "2019",
+  duration: 232,
+  url: "https://www.youtube.com/watch?v=WmQ14igD5-8",
+  explicit: false,
+  imgurl: "js/images/img-1.webp"
+},
+{
+songId: "SID-7005",
+artistId: "AID-1007",
+title: "chutiya",
+year: "2019",
+duration: 251,
+url: "https://www.youtube.com/watch?v=hNtjwGRCoco",
+explicit: true,
+imgurl: "js/images/img-4.jpg"
+
+},
+// Honey Singh
+{
+  songId: "SID-8001",
+  artistId: "AID-1005",
+  title: "Blue Eyes ",
+  year: "2013",
+  duration: 235,
+  url: "https://www.youtube.com/watch?v=NbyHNASFi6U&list=RDEMulALs7qwkePpaGzHG_ttvg&start_radio=1",
+  explicit: false,
+  imgurl: "js/images/img-4.jpg"
+},
+{
+  songId: "SID-8002",
+  artistId: "AID-1005",
+  title: "Desi kalaKaar",
+  year: "2005",
+  duration: 256,
+  url: "https://www.youtube.com/watch?v=KhnVcAC5bIM",
+  explicit: false,
+  imgurl: "js/images/img-2.jpg"
+},
+{
+  songId: "SID-8003",
+  artistId: "AID-1005",
+  title: "Brown Rang",
+  year: "2013",
+  duration: 248,
+  url: "https://www.youtube.com/watch?v=ZbKaRZFnqn8",
+  explicit: false,
+  imgurl: "js/images/img-3.jpg"
+},
+{
+  songId: "SID-8004",
+  artistId: "AID-1005",
+  title: "Jaam",
+  year: "2023",
+  duration: 232,
+  url: "https://www.youtube.com/watch?v=ej6Qgxq4u_A",
+  explicit: false,
+  imgurl: "js/images/img-1.webp"
+},
+{
+songId: "SID-8005",
+artistId: "AID-1005",
+title: "Vol. - 1",
+year: "2008",
+duration: 251,
+url: "https://www.youtube.com/watch?v=n_u_yTZ22fg around    ",
+explicit: true,
+imgurl: "js/images/img-4.jpg"
+},
+{
+  songId: "SID-8006",
+  artistId: "AID-1005",
+  title: "love dose",
+  year: "2013",
+  duration: 251,
+  url: "https://www.youtube.com/watch?v=TvngY4unjn4",
+  explicit: false,
+  imgurl: "js/images/img-4.jpg"
+  },
 ];
