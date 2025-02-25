@@ -61,5 +61,14 @@ window.artists = [
     { url: "https://www.instagram.com/ragasur/?hl=en", name: "Instagram" },
     { url: "https://www.youtube.com/channel/UCayK66t_pe3iEPJPis46oGQ", name: "Youtube" }
   ]
+},
+{
+    artistId: "AID-1008",
+    name: "Lil-DIcky",
+    urls: [
+      { url: "https://www.instagram.com/ragasur/?hl=en", name: "Instagram" },
+      { url: "https://www.youtube.com/channel/UCayK66t_pe3iEPJPis46oGQ", name: "Youtube" }
+    ]
+  
 }
 ];

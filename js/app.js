@@ -46,8 +46,8 @@ function displayAllSongs() {
   const filteredSongs = songs.filter((song) =>!song.explicit && song.imgurl);
 
   // Loop through all songs and create a card for each one
-  filteredSongs.forEach((song) => {
-    const card = createSongCard(song);
+  filteredSongs.forEach((song, index) => {
+    const card = createSongCard(song, index, songs); // Pass index & full song list
     cardContainer.appendChild(card);
   });
 
@@ -69,8 +69,8 @@ function displayAllSongs() {
     cardContainer.innerHTML = "";
 
     const artistSongs = songs.filter((song) => song.artistId === artist.artistId && !song.explicit);
-    artistSongs.forEach((song) => {
-      const card = createSongCard(song);
+    artistSongs.forEach((song, index) => {
+      const card = createSongCard(song, index, artistSongs); // Pass index & filtered list
       cardContainer.appendChild(card);
     });
 
@@ -109,7 +109,7 @@ document.querySelectorAll("#menu button").forEach(button => {
   
 
   // Function to create a song card
-  function createSongCard(song) {
+  function createSongCard(song, index, songs) {
     const card = document.createElement("div");
     card.classList.add("card");
 
@@ -126,15 +126,130 @@ document.querySelectorAll("#menu button").forEach(button => {
     songYear.textContent = `Year: ${song.year}`;
     card.appendChild(songYear);
 
-    const songDuration = document.createElement("span");
-    const minutes = Math.floor(song.duration / 60);
-    const seconds = song.duration % 60;
-    songDuration.textContent = `Duration: ${minutes}:${seconds.toString().padStart(2, "0")}`;
-    card.appendChild(songDuration);
+    const audio = document.createElement("audio");
+    audio.src = song.src;
+    audio.classList.add("audio-player");
+    card.appendChild(audio);
+
+    // Controls Wrapper
+    const controlsDiv = document.createElement("div");
+    controlsDiv.classList.add("controls");
+
+    // Previous Button
+    const prevButton = document.createElement("button");
+    prevButton.textContent = "⏮"; // Previous icon
+    prevButton.classList.add("prev-btn");
+
+    // Play Button
+    const playButton = document.createElement("button");
+    playButton.textContent = "▶"; // Play icon
+    playButton.classList.add("play-btn");
+
+    // Next Button
+    const nextButton = document.createElement("button");
+    nextButton.textContent = "⏭"; // Next icon
+    nextButton.classList.add("next-btn");
+
+    // Append buttons to the controls div
+    controlsDiv.appendChild(prevButton);
+    controlsDiv.appendChild(playButton);
+    controlsDiv.appendChild(nextButton);
+
+    // Append controls to the card
+    card.appendChild(controlsDiv);
+// Function to play a specific song
+function playSong(songIndex) {
+  document.querySelectorAll(".audio-player").forEach((player, i) => {
+      if (i === songIndex) {
+          player.play();
+          document.querySelectorAll(".play-btn")[i].textContent = "⏸";
+      } else {
+          player.pause();
+          player.currentTime = 0;
+          document.querySelectorAll(".play-btn")[i].textContent = "▶";
+      }
+  });
+}
+
+// Play button event
+playButton.addEventListener("click", () => {
+  document.querySelectorAll(".audio-player").forEach((player) => {
+      if (player !== audio) {
+          player.pause();
+          player.currentTime = 0;
+      }
+  });
+
+  document.querySelectorAll(".play-btn").forEach((btn) => {
+      if (btn !== playButton) {
+          btn.textContent = "▶";
+      }
+  });
+
+  if (audio.paused) {
+      audio.play();
+      playButton.textContent = "⏸";
+  } else {
+      audio.pause();
+      playButton.textContent = "▶";
+  }
+});
+
+// Play next song when the current one ends
+audio.addEventListener("ended", () => {
+  playButton.textContent = "▶";
+
+  let nextIndex = (index + 1) % songs.length;
+  playSong(nextIndex);
+});
+
+// Next button event
+nextButton.addEventListener("click", () => {
+  let nextIndex = (index + 1) % songs.length;
+  playSong(nextIndex);
+});
+
+// Previous button event
+prevButton.addEventListener("click", () => {
+  let prevIndex = (index - 1 + songs.length) % songs.length;
+  playSong(prevIndex);
+});
+
+    // card.appendChild(prevButton);
+    // card.appendChild(playButton);
+    // card.appendChild(nextButton);
 
     songImg.addEventListener("click", () => window.open(song.url, "_blank"));
+
     return card;
+}
+
+// Shuffle button
+const shuffleButton = document.createElement("button");
+shuffleButton.textContent = "Shuffle Songs";
+shuffleButton.addEventListener("click", shuffleSongs);
+artistMenu.appendChild(shuffleButton);
+
+// Function to shuffle the songs
+function shuffleSongs() {
+  // Shuffle the songs array using Fisher-Yates algorithm
+  const shuffledSongs = [...songs]; // Copy the original array to avoid modifying it directly
+  for (let i = shuffledSongs.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledSongs[i], shuffledSongs[j]] = [shuffledSongs[j], shuffledSongs[i]]; // Swap elements
   }
+
+  // Clear the current cards and display shuffled songs
+  cardContainer.innerHTML = "";
+  shuffledSongs.forEach((song, index) => {
+    const card = createSongCard(song, index, shuffledSongs);
+    cardContainer.appendChild(card);
+  });
+
+  // Apply random colors to the cards based on theme
+  applyCardColors(currentTheme);
+}
+
 
   // Function to generate a random color for the cards
   function getRandomColor(theme) {

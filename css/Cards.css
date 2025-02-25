@@ -13,7 +13,8 @@ body {
 
 /* Theme Variables */
 :root {
-  --bg-color: #f4f4f4;
+  background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+  --bg-color: #E8F5E9; /* beige: #FAF3E0, Pale-Blue #E3F2FD, Light pastal green: #E8F5E9, soft-gray: #F5F5F5 */
   --text-color: #333;
   --card-bg: #fff;
   --card-text: #212530;
@@ -47,10 +48,6 @@ body {
   color: var(--text-color);
 }
 
-.card-container .card {
-  background-color: var(--card-bg);
-  color: var(--card-text);
-}
 
 /* Navigation Menu */
 #menu {
@@ -168,10 +165,15 @@ Slide-in effect for navBar
 
 /* Card Layout */
 .card-container {
-  display: flex;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusts based on screen */
   justify-content: center;
-  gap: 20px;
-  width: 40%;
+  align-content: center;
+  gap: 15px;
+  width: 100vw;
+  max-width: 100%;
   margin: 20px auto;
   flex-wrap: wrap;
   padding: 0 20px;
@@ -180,12 +182,19 @@ Slide-in effect for navBar
 .card-container .card {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: start;
   background: var(--card-bg);
-  padding: 15px;
-  border-radius: 10px;
+  background-color: var(--card-bg);
+  color: var(--card-text);
+  padding: 10px;
+  margin : 5px;
+  /* border-radius: 4px; */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  width: 45%;
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  max-height: 350px;
+  overflow: hidden;
   box-sizing: border-box;
 }
 
@@ -196,6 +205,34 @@ Slide-in effect for navBar
   border-radius: 5px;
   margin-bottom: 10px;
 }
+
+
+/* Controls Section */
+.controls {
+  display: flex;
+  justify-content: center; /* Aligns buttons in the center */
+  align-items: center;
+  gap: 10px; /* Space between buttons */
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* Buttons Styling */
+.prev-btn, .play-btn, .next-btn {
+  background: #bbbdbb;
+  color: rgb(49, 28, 28);
+  border: none;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background 0.3s ease;
+}
+
+.prev-btn:hover, .play-btn:hover, .next-btn:hover {
+  background: #005f73;
+}
+
 
 /* Responsive Design */
 @media (max-width: 600px) {
