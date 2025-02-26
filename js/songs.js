@@ -16,7 +16,7 @@ window.songs = [
     url: "https://www.youtube.com/watch?v=nSWt0CqMYDg",
     explicit: false,
     imgurl: "js/images/img-4.jpg",
-    src: "js/songs/guentanamo.mp3" // Path to the MP3 file
+    src: "js/songs/Guentanamo.mp3" // Path to the MP3 file
   },
   {
     songId: "SID-2002",
@@ -364,7 +364,7 @@ window.songs = [
     url: "https://www.youtube.com/watch?v=UMMyRg3y7yU",
     explicit: false,
     imgurl: "js/images/img-4.jpg",
-    src: "js/songs/Haan ya Naa.mp3"
+    src: "js/songs/Haan-Ya-Naa.mp3"
   },
   {
     songId: "SID-7002",
@@ -432,7 +432,7 @@ window.songs = [
     url: "https://www.youtube.com/watch?v=KhnVcAC5bIM",
     explicit: false,
     imgurl: "js/images/img-2.jpg",
-    src: "js/songs/Desi kalakaar.mp3"
+    src: "js/songs/Desi Kalakaar.mp3"
   },
   {
     songId: "SID-8003",
@@ -476,7 +476,7 @@ window.songs = [
     url: "https://www.youtube.com/watch?v=TvngY4unjn4",
     explicit: false,
     imgurl: "js/images/img-4.jpg",
-    src: "js/songs/love Dose.mp3"
+    src: "js/songs/Love Dose.mp3"
   },
   {
     songId: "SID-8007",
@@ -494,7 +494,7 @@ window.songs = [
   {
     songId: "SID-9001",
     artistId: "AID-1008",
-    title: "Ex-Boyfriendr",
+    title: "Ex-Boyfriend",
     year: "2013",
     duration: 251,
     url: "https://www.youtube.com/watch?v=RC-e5vs6NeY",
