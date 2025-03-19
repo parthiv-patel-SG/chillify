@@ -1,9 +1,3 @@
-/**
- * artists.js
- *
- * The app's list of Artists
- */
-
 window.artists = [
   {
     artistId: "AID-1001",
@@ -70,5 +64,23 @@ window.artists = [
       { url: "https://www.youtube.com/channel/UCayK66t_pe3iEPJPis46oGQ", name: "Youtube" }
     ]
   
+},
+{
+  artistId: "AID-1009",
+  name: "The Vishesh",
+  urls: [
+    { url: "https://www.instagram.com/ragasur/?hl=en", name: "Instagram" },
+    { url: "https://www.youtube.com/channel/UCayK66t_pe3iEPJPis46oGQ", name: "Youtube" }
+  ]
+
+},
+{
+  artistId: "AID-1010",
+  name: "MRP",
+  urls: [
+    { url: "https://www.instagram.com/ragasur/?hl=en", name: "Instagram" },
+    { url: "https://www.youtube.com/channel/UCayK66t_pe3iEPJPis46oGQ", name: "Youtube" }
+  ]
+
 }
 ];

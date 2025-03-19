@@ -1,302 +1,267 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Get elements for the artist menu, card container, and theme elements
   const artistMenu = document.getElementById("menu");
   const selectedArtistTitle = document.getElementById("selected-artist");
   const cardContainer = document.querySelector(".card-container");
-  const themeButton = document.getElementById("theme-button");
-  const themeNameDisplay = document.getElementById("current-theme");
+  const searchBar = document.getElementById("searchBar");
 
-  // Define available themes
-  const themes = ["light", "dark", "gothic"];
-  let currentTheme = localStorage.getItem("theme") || "light"; // Load saved theme or default to light
+  // Create the navbar dynamically
+  // Navigation bar creation
+const navbar = document.createElement("div");
+navbar.id = "music-navbar-container";
+navbar.innerHTML = `
+  <div id="music-navbar-scroll">
+    <button id="all-songs-btn">All Songs</button>
+    <button id="shuffle-btn">Shuffle</button>
+    <div id="artist-buttons"></div>
+  </div>
+  <div id="progress-container">
+    <div id="progress-bar"></div>
+  </div>
+`;
+document.body.appendChild(navbar);
 
-  // Apply the saved theme on page load
-  document.body.classList.add(`${currentTheme}-mode`);
-  themeNameDisplay.textContent = capitalizeFirstLetter(currentTheme);
+// Navbar button elements
+const allSongsBtn = document.getElementById("all-songs-btn");
+const shuffleBtn = document.getElementById("shuffle-btn");
+const artistButtonsContainer = document.getElementById("artist-buttons");
+const progressBar = document.getElementById("progress-bar");
+const navbarScroll = document.getElementById("music-navbar-scroll");
 
-  // Create buttons for all songs in nav-bar.
-  const showAllSongsButton = document.createElement("button");
-  showAllSongsButton.textContent = "All Songs";
-  showAllSongsButton.addEventListener("click", displayAllSongs);
-  artistMenu.appendChild(showAllSongsButton);
+// Create the "Explicit" button
+const explicitBtn = document.createElement("button");
+explicitBtn.textContent = "Explicit";
+explicitBtn.id = "explicit-btn";
+explicitBtn.addEventListener("click", displayExplicitSongs);
+artistButtonsContainer.appendChild(explicitBtn);
 
-
-  // Create buttons for each artist in the navigation menu
-  artists.forEach((artist) => {
-    const button = document.createElement("button");
-    button.textContent = artist.name;
-    button.addEventListener("click", () => displayArtistData(artist));
-    artistMenu.appendChild(button);
+// Function to update progress bar
+function updateProgress(audio) {
+  audio.addEventListener("timeupdate", () => {
+    const percentage = (audio.currentTime / audio.duration) * 100;
+    progressBar.style.width = `${percentage}%`;
   });
-  // Button for explicit songs.
-  const showExplicitSongsButton = document.createElement("button");
-  showExplicitSongsButton.textContent = "Explicit";
-  showExplicitSongsButton.addEventListener("click", displayExplicitSongs);
-  artistMenu.appendChild(showExplicitSongsButton);
+}
+
+// Function to highlight active button and scroll it into view
+function highlightButton(button) {
+  // Remove active class from all buttons
+  document.querySelectorAll("#music-navbar-scroll button").forEach((btn) => {
+    btn.classList.remove("active-button");
+  });
+  
+  // Add active class to clicked button
+  
+  // Scroll button into view
+  setTimeout(() => {
+    const buttonRect = button.getBoundingClientRect();
+    const navRect = navbarScroll.getBoundingClientRect();
+    
+    // Calculate scroll position to center the button
+    const scrollPos = button.offsetLeft - (navbarScroll.clientWidth / 2) + (button.clientWidth / 2);
+    
+    // Scroll to the button
+    navbarScroll.scrollTo({
+      left: scrollPos,
+      behavior: 'smooth'
+    });
+  }, 50);
+}
+
+// Update event listeners
+allSongsBtn.addEventListener("click", function() {
+  displayAllSongs();
+});
+
+shuffleBtn.addEventListener("click", function() {
+  shuffleSongs();
+});
+
+// Update artist buttons creation
+artists.forEach((artist) => {
+  const artistBtn = document.createElement("button");
+  artistBtn.textContent = artist.name;
+  artistBtn.addEventListener("click", function() {
+    displayArtistSongs(artist);
+  });
+  artistButtonsContainer.appendChild(artistBtn);
+});
+
+// Update explicit button
+explicitBtn.addEventListener("click", function() {
+  displayExplicitSongs();
+});
+
+// Add touch swipe support for mobile
+let touchStartX = 0;
+let touchEndX = 0;
+
+navbarScroll.addEventListener('touchstart', (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+});
+
+navbarScroll.addEventListener('touchend', (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  const swipeDistance = touchEndX - touchStartX;
+  
+  if (Math.abs(swipeDistance) > 50) {
+    navbarScroll.scrollBy({
+      left: -swipeDistance,
+      behavior: 'smooth'
+    });
+  }
+});
+
+// Highlight All Songs button by default
+window.addEventListener('DOMContentLoaded', () => {
+  highlightButton(allSongsBtn);
+});
 
   // Function to display all songs
-function displayAllSongs() {
-  // Update the selected artist title to "All Songs"
-  selectedArtistTitle.innerHTML = "All Songs";
-
-  // Clear the current cards
-  cardContainer.innerHTML = "";
- 
-  // Filter songs that are not explicit and have a non-null image URL
-  const filteredSongs = songs.filter((song) =>!song.explicit && song.imgurl);
-
-  // Loop through all songs and create a card for each one
-  filteredSongs.forEach((song, index) => {
-    const card = createSongCard(song, index, songs); // Pass index & full song list
-    cardContainer.appendChild(card);
-  });
-
-  // Apply random colors to the cards based on the current theme
-  applyCardColors(currentTheme);
-}
-
-// Display all songs as default
- displayAllSongs();
-  // // Display songs for the first artist by default
-  // displayArtistData(artists[0]);
-
-  // Function to display artist data and songs as cards
-  function displayArtistData(artist) {
-    selectedArtistTitle.innerHTML = `${artist.name} (${artist.urls
-      .map((link) => `<a href="${link.url}" target="_blank">${link.name}</a>`)
-      .join(", ")})`;
-
+  function displayAllSongs() {
+    selectedArtistTitle.innerHTML = "All Songs";
     cardContainer.innerHTML = "";
 
-    const artistSongs = songs.filter((song) => song.artistId === artist.artistId && !song.explicit);
-    artistSongs.forEach((song, index) => {
-      const card = createSongCard(song, index, artistSongs); // Pass index & filtered list
+    const filteredSongs = songs.filter((song) => !song.explicit);
+
+    filteredSongs.forEach((song, index) => {
+      const card = createSongCard(song, index);
       cardContainer.appendChild(card);
     });
-
-    applyCardColors(currentTheme);
   }
 
-  // Function to update active button in navbar
-  {
-function updateActiveNavButton(selectedButton) {
-  // Get all buttons inside the menu
-  const navButtons = document.querySelectorAll("#menu button");
+  // Function to shuffle songs
+  function shuffleSongs() {
+    const filteredSongs = songs.filter((song) => !song.explicit);
+    const shuffled = filteredSongs.sort(() => Math.random() - 0.5);
+    cardContainer.innerHTML = "";
 
-  // Remove 'active' class from all buttons
-  navButtons.forEach(button => button.classList.remove("active"));
-
-  // Add 'active' class to the clicked button
-  selectedButton.classList.add("active");
-   // Scroll the navbar so the selected button is visible
-   selectedButton.scrollIntoView({ behavior: "smooth", inline: "center" });
-}
-
-// Example usage: Call this function when switching views
-document.querySelectorAll("#menu button").forEach(button => {
-  button.addEventListener("click", function () {
-    updateActiveNavButton(this);
-  });
-});
-  }
- // force Start the scroll bar from the first button
-  document.addEventListener("DOMContentLoaded", function () {
-    const menu = document.getElementById("menu");
-  
-    // Scrolls to the first button on load
-    menu.scrollLeft = 0;
-  });
-  
-
-  // Function to create a song card
-  function createSongCard(song, index, songs) {
-    const card = document.createElement("div");
-    card.classList.add("card");
-
-    const songImg = document.createElement("img");
-    songImg.src = song.imgurl || "https://via.placeholder.com/250x150";
-    songImg.alt = `${song.title} Image`;
-    card.appendChild(songImg);
-
-    const songTitle = document.createElement("h2");
-    songTitle.textContent = song.title;
-    card.appendChild(songTitle);
-
-    const songYear = document.createElement("time");
-    songYear.textContent = `Year: ${song.year}`;
-    card.appendChild(songYear);
-
-    const audio = document.createElement("audio");
-    audio.src = song.src;
-    audio.classList.add("audio-player");
-    card.appendChild(audio);
-
-    // Controls Wrapper
-    const controlsDiv = document.createElement("div");
-    controlsDiv.classList.add("controls");
-
-    // Previous Button
-    const prevButton = document.createElement("button");
-    prevButton.textContent = "⏮"; // Previous icon
-    prevButton.classList.add("prev-btn");
-
-    // Play Button
-    const playButton = document.createElement("button");
-    playButton.textContent = "▶"; // Play icon
-    playButton.classList.add("play-btn");
-
-    // Next Button
-    const nextButton = document.createElement("button");
-    nextButton.textContent = "⏭"; // Next icon
-    nextButton.classList.add("next-btn");
-
-    // Append buttons to the controls div
-    controlsDiv.appendChild(prevButton);
-    controlsDiv.appendChild(playButton);
-    controlsDiv.appendChild(nextButton);
-
-    // Append controls to the card
-    card.appendChild(controlsDiv);
-// Function to play a specific song
-function playSong(songIndex) {
-  document.querySelectorAll(".audio-player").forEach((player, i) => {
-      if (i === songIndex) {
-          player.play();
-          document.querySelectorAll(".play-btn")[i].textContent = "⏸";
-      } else {
-          player.pause();
-          player.currentTime = 0;
-          document.querySelectorAll(".play-btn")[i].textContent = "▶";
-      }
-  });
-}
-
-// Play button event
-playButton.addEventListener("click", () => {
-  document.querySelectorAll(".audio-player").forEach((player) => {
-      if (player !== audio) {
-          player.pause();
-          player.currentTime = 0;
-      }
-  });
-
-  document.querySelectorAll(".play-btn").forEach((btn) => {
-      if (btn !== playButton) {
-          btn.textContent = "▶";
-      }
-  });
-
-  if (audio.paused) {
-      audio.play();
-      playButton.textContent = "⏸";
-  } else {
-      audio.pause();
-      playButton.textContent = "▶";
-  }
-});
-
-// Play next song when the current one ends
-audio.addEventListener("ended", () => {
-  playButton.textContent = "▶";
-
-  let nextIndex = (index + 1) % songs.length;
-  playSong(nextIndex);
-});
-
-// Next button event
-nextButton.addEventListener("click", () => {
-  let nextIndex = (index + 1) % songs.length;
-  playSong(nextIndex);
-});
-
-// Previous button event
-prevButton.addEventListener("click", () => {
-  let prevIndex = (index - 1 + songs.length) % songs.length;
-  playSong(prevIndex);
-});
-
-    // card.appendChild(prevButton);
-    // card.appendChild(playButton);
-    // card.appendChild(nextButton);
-
-    songImg.addEventListener("click", () => window.open(song.url, "_blank"));
-
-    return card;
-}
-
-// Shuffle button
-const shuffleButton = document.createElement("button");
-shuffleButton.textContent = "Shuffle Songs";
-shuffleButton.addEventListener("click", shuffleSongs);
-artistMenu.appendChild(shuffleButton);
-
-// Function to shuffle the songs
-function shuffleSongs() {
-  // Shuffle the songs array using Fisher-Yates algorithm
-  const shuffledSongs = [...songs]; // Copy the original array to avoid modifying it directly
-  for (let i = shuffledSongs.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffledSongs[i], shuffledSongs[j]] = [shuffledSongs[j], shuffledSongs[i]]; // Swap elements
-  }
-
-  // Clear the current cards and display shuffled songs
-  cardContainer.innerHTML = "";
-  shuffledSongs.forEach((song, index) => {
-    const card = createSongCard(song, index, shuffledSongs);
-    cardContainer.appendChild(card);
-  });
-
-  // Apply random colors to the cards based on theme
-  applyCardColors(currentTheme);
-}
-
-
-  // Function to generate a random color for the cards
-  function getRandomColor(theme) {
-    const colors = {
-      light: ["#80c1f5", "#d3d3d3", "#C3A2D1", "#D4E4F7", "#f5f5f5"],
-      dark: ["#1E1E1E", "#333", "#4B4B4B", "#2C2C2C", "#424242"],
-      gothic: ["#B71C1C", "#673AB7", "#607D8B", "#795548"],
-    };
-
-    return colors[theme][Math.floor(Math.random() * colors[theme].length)];
-  }
-
-  // Apply colors to the cards based on theme
-  function applyCardColors(theme) {
-    document.querySelectorAll(".card").forEach((card) => {
-      card.style.backgroundColor = getRandomColor(theme);
-      card.style.boxShadow = `0 4px 8px rgba(0, 0, 0, 0.1)`;
-      card.style.border = `2px solid ${getRandomColor(theme)}`;
+    shuffled.forEach((song, index) => {
+      const card = createSongCard(song, index);
+      cardContainer.appendChild(card);
     });
   }
 
-  // / Function to display explicit songs with a warning
+  function displayArtistSongs(artist) {
+    selectedArtistTitle.innerHTML = artist.name;
+    cardContainer.innerHTML = "";
+
+    const artistSongs = songs.filter(
+      (song) => song.artistId === artist.artistId && !song.explicit
+    );
+      artistSongs.forEach((song, index) => {
+      const card = createSongCard(song, index);
+      cardContainer.appendChild(card);
+    });
+  }
+
   function displayExplicitSongs() {
-    const userConfirmed = window.confirm("Warning: Explicit content ahead. These songs may be harmful or inappropriate for some users. Do you wish to continue?");
-    
+    const userConfirmed = window.confirm(
+      "Warning: Explicit content ahead. These songs may be harmful or inappropriate for some users. Do you wish to continue?"
+    );
+  
     if (userConfirmed) {
       selectedArtistTitle.innerHTML = "Explicit Songs";
       cardContainer.innerHTML = "";
-
+  
       // Filter songs to show only explicit ones
       const explicitSongs = songs.filter((song) => song.explicit);
-
+  
       // Create and display cards for each explicit song
       explicitSongs.forEach((song) => {
         const card = createSongCard(song);
         cardContainer.appendChild(card);
       });
-
-      // Apply random colors to the cards based on the current theme
+  
+      // Ensure currentTheme is set before applying colors
+      const currentTheme = document.body.getAttribute("data-theme") || "pastel";
       applyCardColors(currentTheme);
     } else {
-      // If the user cancels, you can show an alert or return
       alert("You have canceled the explicit content display.");
     }
   }
-   // Search functionality
-   searchBar.addEventListener("input", () => {
+  
+
+  allSongsBtn.addEventListener("click", displayAllSongs);
+  shuffleBtn.addEventListener("click", shuffleSongs);
+
+  // Function to create a song card
+  let currentAudio = null; // Store the currently playing audio
+  let currentIndex = 0; // Track the current song index
+  
+  function createSongCard(song, index) {
+    const card = document.createElement("div");
+    card.classList.add("card");
+  
+    const songImg = document.createElement("img");
+    songImg.src = song.imgurl || "https://via.placeholder.com/250x150";
+    card.appendChild(songImg);
+  
+    const songTitle = document.createElement("h2");
+    songTitle.textContent = song.title;
+    card.appendChild(songTitle);
+  
+    const audio = document.createElement("audio");
+    audio.src = song.src;
+    audio.controls = true;
+    card.appendChild(audio);
+  
+    audio.addEventListener("play", () => {
+      if (currentAudio && currentAudio !== audio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      }
+      currentAudio = audio;
+      currentIndex = index; // Update index
+      updateFloatingWindow(song.title, card);
+    });
+  
+    audio.addEventListener("ended", () => {
+      playNextSong();
+    });
+  
+    updateProgress(audio);
+    return card;
+  }
+  
+  
+  function togglePlayPause() {
+    if (currentAudio) {
+      if (currentAudio.paused) {
+        currentAudio.play();
+      } else {
+        currentAudio.pause();
+      }
+    }
+  }
+  
+  // Contols Buttons
+  function playNextSong() {
+    const allAudioElements = document.querySelectorAll("audio");
+  
+    if (currentIndex < allAudioElements.length - 1) {
+      currentIndex++;
+    } else {
+      currentIndex = 0; // Loop back
+    }
+  
+    allAudioElements[currentIndex].play();
+  }
+  
+  function playPreviousSong() {
+    const allAudioElements = document.querySelectorAll("audio");
+  
+    if (currentIndex > 0) {
+      currentIndex--;
+    } else {
+      currentIndex = allAudioElements.length - 1; // Loop back to last song
+    }
+  
+    allAudioElements[currentIndex].play();
+  }
+  
+  displayAllSongs();
+
+  searchBar.addEventListener("input", () => {
     const query = searchBar.value.toLowerCase().trim(); // Get the trimmed search query
 
     // Clear the current cards
@@ -323,29 +288,305 @@ function shuffleSongs() {
     });
 
     // Apply random colors to the cards based on the current theme
-    applyCardColors(currentTheme);
-  });
+    const currentTheme = document.body.getAttribute('data-theme') || 'pastel';
+    applyCardColors(currentTheme);  });
 
-  // Theme change handler
-  themeButton.addEventListener("click", () => {
-    let currentIndex = themes.indexOf(currentTheme);
-    currentTheme = themes[(currentIndex + 1) % themes.length]; // Cycle through themes
+    // Create floating window dynamically
+const floatingWindow = document.createElement('div');
+floatingWindow.id = 'floating-window';
+floatingWindow.innerHTML = `
+  <h5 id="currently-playing-title">Currently Playing</h2>
+  <p id="currently-playing-song">No song is playing</p>
+  <div id="floating-progress-container">
+    <div id="floating-progress-bar"></div>
+  </div>
+`;
+document.body.appendChild(floatingWindow);
 
-    // Update body class for theme
-    document.body.className = `${currentTheme}-mode`;
+let currentPlayingCard = null; // To store the currently playing song's card
 
-    // Update theme display
-    themeNameDisplay.textContent = capitalizeFirstLetter(currentTheme);
+let currentSongCard = null; // Store the reference to the playing song's card
 
-    // Save the theme in localStorage
-    localStorage.setItem("theme", currentTheme);
+function updateFloatingWindow(songTitle, card) {
+  let floatingWindow = document.getElementById("floating-window");
 
-    // Apply new colors
-    applyCardColors(currentTheme);
-  });
-
-  // Capitalize first letter of theme name
-  function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+  if (!floatingWindow) {
+    floatingWindow = document.createElement("div");
+    floatingWindow.id = "floating-window";
+    document.body.appendChild(floatingWindow);
   }
+
+  floatingWindow.innerHTML = `
+    <span id="floating-song-title">Now Playing: ${songTitle}</span>
+    <button id="prev-btn">⏮</button>
+    <button id="play-pause-btn">⏯</button>
+    <button id="next-btn">⏭</button>
+  `;
+
+  floatingWindow.style.display = "block";
+
+  // Store the reference to the currently playing song card
+  currentSongCard = card;
+
+  // Add event listeners for controls
+  document.getElementById("prev-btn").addEventListener("click", playPreviousSong);
+  document.getElementById("play-pause-btn").addEventListener("click", togglePlayPause);
+  document.getElementById("next-btn").addEventListener("click", playNextSong);
+
+  // Add event listener for clicking floating window to scroll to the song
+  floatingWindow.addEventListener("click", scrollToCurrentSong);
+}
+
+function scrollToCurrentSong() {
+  if (currentSongCard) {
+    currentSongCard.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
+
+
+function highlightButton(button) {
+  // Remove 'active-button' class from all navbar buttons
+  document.querySelectorAll("#music-navbar button").forEach((btn) => {
+    btn.classList.remove("active-button");
+  });
+
+  // Add 'active-button' class to the clicked button
+  button.classList.add("active-button");
+}
+
+// Update event listeners to highlight buttons when clicked
+allSongsBtn.addEventListener("click", function () {
+  displayAllSongs();
+  highlightButton(this);
 });
+
+shuffleBtn.addEventListener("click", function () {
+  shuffleSongs();
+  highlightButton(this);
+});
+
+// Highlight artist buttons when clicked
+artistButtonsContainer.querySelectorAll("button").forEach((button) => {
+  button.addEventListener("click", function () {
+    highlightButton(this);
+  });
+});
+
+// Highlight explicit button when clicked
+document.getElementById("explicit-btn").addEventListener("click", function () {
+  displayExplicitSongs();
+  highlightButton(this);
+});
+
+document.querySelectorAll("#music-navbar button").forEach(button => {
+  button.addEventListener("click", () => {
+    const navbar = document.getElementById("music-navbar");
+    const buttonRect = button.getBoundingClientRect();
+    const navbarRect = navbar.getBoundingClientRect();
+
+    // Scroll the navbar so the button is centered
+    navbar.scrollBy({
+      left: buttonRect.left - navbarRect.left - (navbarRect.width / 2) + (buttonRect.width / 2),
+      behavior: "smooth"
+    });
+  });
+});
+
+
+  
+});
+
+// Add the checkbox under the theme button
+document.addEventListener('DOMContentLoaded', function() {
+  // Create the checkbox and label container
+  const autoThemeContainer = document.createElement('div');
+  autoThemeContainer.className = 'auto-theme-container';
+  autoThemeContainer.style.display = 'flex';
+  autoThemeContainer.style.alignItems = 'center';
+  autoThemeContainer.style.marginTop = '8px'; // Space below the theme button
+  
+  // Create the checkbox
+  const autoThemeCheckbox = document.createElement('input');
+  autoThemeCheckbox.type = 'checkbox';
+  autoThemeCheckbox.id = 'auto-theme-toggle';
+  autoThemeCheckbox.style.margin = '0 5px 0 0';
+  
+  // Load saved auto-switch preference
+  const autoSwitchEnabled = localStorage.getItem('autoThemeSwitch') === 'true';
+  autoThemeCheckbox.checked = autoSwitchEnabled;
+  
+  // Create the label
+  const autoThemeLabel = document.createElement('label');
+  autoThemeLabel.htmlFor = 'auto-theme-toggle';
+  autoThemeLabel.textContent = 'Auto-switch';
+  autoThemeLabel.style.fontSize = '14px';
+  autoThemeLabel.style.color = 'white';
+  
+  // Append elements
+  autoThemeContainer.appendChild(autoThemeCheckbox);
+  autoThemeContainer.appendChild(autoThemeLabel);
+  
+  // Find the theme button and create a wrapper for it if it doesn't exist
+  const themeButton = document.getElementById('theme-button');
+  if (themeButton) {
+    // Check if theme button is already in a container
+    let themeContainer = themeButton.parentElement;
+    
+    // If the button isn't in a div container already, create one and wrap the button
+    if (themeContainer.tagName !== 'DIV' || !themeContainer.classList.contains('theme-controls')) {
+      themeContainer = document.createElement('div');
+      themeContainer.className = 'theme-controls';
+      themeContainer.style.display = 'flex';
+      themeContainer.style.flexDirection = 'column';
+      themeContainer.style.alignItems = 'center';
+      
+      // Replace the button with our container
+      themeButton.parentNode.insertBefore(themeContainer, themeButton);
+      themeContainer.appendChild(themeButton);
+    }
+    
+    // Add the auto-theme container under the button
+    themeContainer.appendChild(autoThemeContainer);
+  }
+  
+  // Load saved theme on page load
+  const savedTheme = localStorage.getItem('preferredTheme') || 'pastel';
+  document.body.setAttribute('data-theme', savedTheme);
+  updateTheme(savedTheme);
+  applyCardColors(savedTheme);
+  
+  if (document.getElementById('current-theme')) {
+    document.getElementById('current-theme').innerText = capitalizeFirstLetter(savedTheme);
+  }
+  
+  // Initialize auto-switching based on saved preference
+  initAutoThemeSwitching(autoSwitchEnabled);
+  
+  // Add event listener for the checkbox
+  autoThemeCheckbox.addEventListener('change', function() {
+    const isAutoEnabled = this.checked;
+    
+    // Save preference to localStorage
+    localStorage.setItem('autoThemeSwitch', isAutoEnabled);
+    
+    // Initialize or clear the auto switching
+    initAutoThemeSwitching(isAutoEnabled);
+  });
+});
+
+// Theme buttons logic 
+document.getElementById('theme-button').addEventListener('click', function() {
+  let currentTheme = document.body.getAttribute('data-theme') || 'pastel';
+  
+  // List of available themes
+  const themes = [
+    'pastel',
+    'dark',
+    'gothic',
+    'forest',
+    'cyberpunk',
+    'glassmorphism',
+    'galaxy',
+    'vintage-newspaper',
+    'matrix',
+    'futuristic-hud',
+    'desert'
+  ];
+  
+  let nextTheme = themes[(themes.indexOf(currentTheme) + 1) % themes.length];
+  document.body.setAttribute('data-theme', nextTheme);
+  
+  // Save the selected theme to localStorage
+  localStorage.setItem('preferredTheme', nextTheme);
+  
+  updateTheme(nextTheme);
+  applyCardColors(nextTheme);
+  
+  // Update the text for the current theme
+  document.getElementById('current-theme').innerText = capitalizeFirstLetter(nextTheme);
+});
+
+// Auto theme switching interval reference
+let autoThemeInterval = null;
+
+// Function to initialize or clear auto theme switching
+function initAutoThemeSwitching(enabled) {
+  // Clear any existing interval
+  if (autoThemeInterval) {
+    clearInterval(autoThemeInterval);
+    autoThemeInterval = null;
+  }
+  
+  // Set up new interval if enabled
+  if (enabled) {
+    autoThemeInterval = setInterval(() => {
+      let currentTheme = document.body.getAttribute('data-theme') || 'pastel';
+      
+      const themes = [
+        'pastel',
+        'dark',
+        'gothic',
+        'forest',
+        'cyberpunk',
+        'glassmorphism',
+        'galaxy',
+        'vintage-newspaper',
+        'matrix',
+        'futuristic-hud',
+        'desert'
+      ];
+      
+      let nextTheme = themes[(themes.indexOf(currentTheme) + 1) % themes.length];
+      document.body.setAttribute('data-theme', nextTheme);
+      
+      // Save the auto-switched theme to localStorage
+      localStorage.setItem('preferredTheme', nextTheme);
+      
+      updateTheme(nextTheme);
+      applyCardColors(nextTheme);
+      
+      // Update the text for the current theme
+      if (document.getElementById('current-theme')) {
+        document.getElementById('current-theme').innerText = capitalizeFirstLetter(nextTheme);
+      }
+    }, 100000); // Change theme every 1 min (100000ms)
+  }
+}
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function updateTheme(theme) {
+  // Remove all existing theme classes
+  document.body.classList.remove(...document.body.classList);
+  document.body.classList.add(theme);
+}
+
+// Applying colors to the cards according to the theme
+function applyCardColors(theme) {
+  const songCards = document.querySelectorAll('.card'); // Using '.card' for the song cards
+  
+  const colors = {
+    pastel: ['#FFB6C1', '#BFD8B8', '#A2DFF7', '#FFE156', '#FF8B94'],
+    dark: ['#1F1F1F', '#2E2E2E', '#393939', '#4C4C4C', '#606060'],
+    gothic: ['#2B2B2B', '#6F1F8D', '#D53D4B', '#000000', '#A2A2A2'],
+    forest: ['#2E8B57', '#3CB371', '#228B22', '#6B8E23', '#98FB98'],
+    cyberpunk: ['#00FFAB', '#FF00A0', '#FF00D9', '#0D00FF', '#D500F9'],
+    glassmorphism: ['#FFFFFF', '#A9A9A9', '#F0F0F0', '#D3D3D3', '#EAEAEA'],
+    galaxy: ['#2F3A54', '#423C58', '#6C55A1', '#9E77D3', '#4B3F5B'],
+    'vintage-newspaper': ['#C1B897', '#D1C7B7', '#B69A6E', '#9E7A4A', '#6A4E3A'],
+    matrix: ['#00FF00', '#00FF33', '#00CC00', '#003300', '#003333'],
+    'futuristic-hud': ['#18A0FB', '#0F8DFF', '#0D72E3', '#1D1F2E', '#1F2529'],
+    desert: ['#D17B5B', '#DB9F7F', '#E4C29B', '#C68E17', '#9A7A3A']
+  };
+  
+  // Get the color set for the selected theme
+  const themeColors = colors[theme] || [];
+  
+  // Apply random color to each song card
+  songCards.forEach(card => {
+    const randomColor = themeColors[Math.floor(Math.random() * themeColors.length)];
+    card.style.backgroundColor = randomColor;
+  });
+}
