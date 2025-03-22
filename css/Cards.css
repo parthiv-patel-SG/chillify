@@ -1,320 +1,159 @@
-html {
-  scroll-behavior: smooth;
+/* Base variables and resets */
+:root {
+  /* Primary theme colors - can be overridden by specific themes */
+  --primary-color: #1DB954; /* Spotify green */
+  --secondary-color: #1A1A1A;
+  --text-color: #FFFFFF;
+  --bg-color: #121212; /* Spotify dark */
+  --card-bg: #181818;
+  --card-hover-bg: #282828;
+  --card-text: #FFFFFF;
+  --button-bg: #1DB954;
+  --button-hover: #1ED760;
+  --button-text: #FFFFFF;
+  --progress-bg: #535353;
+  --progress-fg: #1DB954;
+  --nav-bg: #000000;
+  --nav-text: #B3B3B3;
+  --search-bg: #323232;
+  --header-bg: rgba(0, 0, 0, 0.6);
+  --shadow-color: rgba(0, 0, 0, 0.5);
 }
 
-/* General Page Styling */
+html {
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Circular', 'Helvetica Neue', Arial, sans-serif;
   margin: 0;
   padding: 0;
   background-color: var(--bg-color);
   color: var(--text-color);
-}
-
-/* Theme Variables */
-:root {
-  background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
-  --bg-color: #E8F5E9; /* beige: #FAF3E0, Pale-Blue #E3F2FD, Light pastal green: #E8F5E9, soft-gray: #F5F5F5 */
-  --text-color: #333;
-  --card-bg: #fff;
-  --card-text: #212530;
-  --button-bg: #444;
-  --button-hover: #63666d;
-}
-/* Navigation bar container */
-#music-navbar-container {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #000;
-  z-index: 1000;
-  padding: 10px 0;
+  transition: background-color 0.3s, color 0.3s;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+  padding-bottom: 100px; /* Space for the fixed player */
 }
 
-/* Scrollable navbar */
-#music-navbar-scroll {
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  margin-top: 0;
+}
+
+/* Header styling */
+header {
   display: flex;
-  overflow-x: auto;
-  white-space: nowrap;
-  scrollbar-width: thin;
-  -webkit-overflow-scrolling: touch;
-  padding: 0 10px 10px 10px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px 20px;
+  position: relative;
+  background: var(--header-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, var(--primary-color), #4776E6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+header p {
+  font-size: 1.2rem;
+  color: var(--text-color);
+  opacity: 0.8;
+  margin-top: 0;
+  font-weight: 300;
+}
+
+/* Search Bar */
+#search-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 20px auto 0;
   position: relative;
 }
 
-/* Scrollbar styling */
-#music-navbar-scroll::-webkit-scrollbar {
-  height: 4px;
-}
-
-#music-navbar-scroll::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
-}
-
-#music-navbar-scroll::-webkit-scrollbar-track {
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-}
-
-/* Button styling */
-#music-navbar-scroll button {
-  flex: 0 0 auto;
-  margin: 0 5px;
-  padding: 10px 15px;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-  border-radius: 5px;
-  background-color: #444;
-  color: white;
-  transition: all 0.3s ease;
-}
-
-#music-navbar-scroll button:hover {
-  background-color: #666;
-  transform: scale(1.05);
-}
-
-/* Artist buttons container */
-#artist-buttons {
-  display: inline-flex;
-  margin-left: 5px;
-}
-
-/* Progress bar container */
-#progress-container {
+#searchBar {
   width: 100%;
-  background-color: #555;
-  height: 5px;
-  border-radius: 5px;
-  overflow: hidden;
-  margin-top: 5px;
-}
-
-/* Progress bar */
-#progress-bar {
-  height: 100%;
-  width: 0;
-  background-color: lime;
-  transition: width 0.2s;
-}
-
-/* Active button styling */
-/* .active-button {
-  background: linear-gradient(135deg, #ff8c00, #ff2e63) !important;
-  color: white !important;
-  font-weight: bold !important;
-  transform: scale(1.05) !important;
-  box-shadow: 0 0 8px rgba(255, 140, 0, 0.7) !important;
-} */
-
-/* Scroll indicator animations */
-@keyframes scrollIndicator {
-  0% { opacity: 0.8; }
-  50% { opacity: 0.2; }
-  100% { opacity: 0.8; }
-}
-
-/* Scroll indicators */
-#music-navbar-scroll::before,
-#music-navbar-scroll::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 8px;
-  height: 8px;
-  border-style: solid;
-  border-width: 0 2px 2px 0;
-  display: inline-block;
-  padding: 3px;
-  animation: scrollIndicator 1.5s infinite;
-  pointer-events: none;
-}
-
-#music-navbar-scroll::before {
-  left: 5px;
-  transform: translateY(-50%) rotate(135deg);
-}
-
-#music-navbar-scroll::after {
-  right: 5px;
-  transform: translateY(-50%) rotate(-45deg);
-}
-
-/* Floating window adjustments */
-#floating-window {
-  position: fixed;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.8);
-  color: rgb(127, 7, 7);
-  padding: 8px 15px;
-  border-radius: 8px;
-  font-size: 17px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  z-index: 1001;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  #music-navbar-scroll button {
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-  
-  #floating-window {
-    max-width: 90%;
-    font-size: 14px;
-  }
-}
-
-/* themes settings */
-/* General theme settings */
-body {
-  transition: background-color 0.3s, color 0.3s;
-}
-
-/* Pastel Theme */
-body.pastel {
-  background-color: #f0e5ff;
-  color: #333;
-}
-body.pastel .header, body.pastel .footer {
-  background-color: #ffcccb;
-}
-
-/* Dark Theme */
-body.dark {
-  background-color: #121212;
-  color: #e0e0e0;
-}
-body.dark .header, body.dark .footer {
-  background-color: #1f1f1f;
-}
-
-/* Gothic Theme */
-body.gothic {
-  background-color: #2a2a2a;
-  color: #f4a300;
-}
-body.gothic .header, body.gothic .footer {
-  background-color: #4b2e83;
-}
-
-/* Forest Theme */
-body.forest {
-  background-color: #2f4f4f;
-  color: #e0ffe0;
-}
-body.forest .header, body.forest .footer {
-  background-color: #3e8e41;
-}
-
-/* Cyberpunk Theme */
-body.cyberpunk {
-  background-color: #0f0f0f;
-  color: #d700ff;
-}
-body.cyberpunk .header, body.cyberpunk .footer {
-  background-color: #e60000;
-}
-
-/* Glassmorphism Theme */
-body.glassmorphism {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  color: #fff;
-}
-body.glassmorphism .header, body.glassmorphism .footer {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-/* Galaxy Theme */
-body.galaxy {
-  background-color: #010032;
-  color: #fff;
-}
-body.galaxy .header, body.galaxy .footer {
-  background-color: #3a0066;
-}
-
-/* Vintage Newspaper Theme */
-body.vintage-newspaper {
-  background-color: #f5f5dc;
-  color: #3e3e3e;
-}
-body.vintage-newspaper .header, body.vintage-newspaper .footer {
-  background-color: #9e9e9e;
-}
-
-/* Matrix Theme */
-body.matrix {
-  background-color: #000;
-  color: #00ff00;
-}
-body.matrix .header, body.matrix .footer {
-  background-color: #007700;
-}
-
-/* Futuristic HUD Theme */
-body.futuristic-hud {
-  background-color: #101010;
-  color: #00ffcc;
-}
-body.futuristic-hud .header, body.futuristic-hud .footer {
-  background-color: #003333;
-}
-
-/* Desert Theme */
-body.desert {
-  background-color: #f4e1b2;
-  color: #8b4513;
-}
-body.desert .header, body.desert .footer {
-  background-color: #deb887;
-}
-
-/* Theme Button */
-#theme-button {
-  padding: 8px 15px;
-  font-size: 14px;
+  padding: 12px 20px;
+  border-radius: 50px;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  background-color: var(--search-bg);
+  color: var(--text-color);
+  font-size: 16px;
+  transition: all 0.3s;
+  outline: none;
+}
+
+#searchBar:focus {
+  box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+#searchBar::placeholder {
+  color: var(--nav-text);
+}
+
+/* Theme selector */
+#theme-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: 10;
+}
+
+#theme-button {
   background-color: var(--button-bg);
-  color: white;
-  transition: background 0.3s;
+  color: var(--button-text);
+  padding: 8px 16px;
+  border: none;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
 #theme-button:hover {
   background-color: var(--button-hover);
+  transform: scale(1.05);
 }
 
-/* Card Layout */
+#current-theme {
+  margin-top: 5px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.auto-theme-container {
+  margin-top: 10px;
+}
+
+/* Card container */
 .card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 20px;
   width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
-  display: flex;;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusts based on screen */
-  justify-content: center;
-  align-content: center;
-  gap: 15px;
-  width: 100vw;
-  max-width: 100%;
-  margin: 20px auto;
-  flex-wrap: wrap;
-  padding: 0 20px;
 }
 
+/* Card styling */
 .card-container .card {
   display: flex;
   flex-direction: column;
@@ -334,217 +173,431 @@ body.desert .header, body.desert .footer {
   box-sizing: border-box;
 }
 
-/* Card Images */
-.card img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 5px;
-  margin-bottom: 10px;
-}
-
-/* Responsive Design */
-@media (max-width: 600px) {
-  .card-container {
-    width: 90%;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .card-container .card {
-    width: 100%;
-  }
-}
-
 .card:hover {
-  background-color: #63666d; /* Keeps your current hover background */
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.6); /* Soft glow effect */
-  border: 2px solid #fff; /* Highlighted border */
-  transform: scale(1.05); /* Slight zoom effect */
-  transition: all 0.3s ease-in-out; /* Smooth transition */
+  transform: translateY(-5px);
+  background-color: var(--card-hover-bg);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4);
 }
 
-/* Light Mode */
-.light-mode .card {
-  background-color: #fff;
-  color: #212530;
+.card img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }
 
-/* Dark Mode */
-.dark-mode .card {
-  background-color: #333;
-  color: #e9eaec;
+.card h2 {
+  font-size: 16px;
+  padding: 12px 15px 8px;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Gothic Mode */
-.gothic-mode .card {
-  background-color: #2c2c2c;
-  color: #f0f0f0;
+.card audio {
+  width: 100%;
+  margin-top: auto;
+  padding: 0 10px 10px;
+  box-sizing: border-box;
 }
 
-#theme-container {
-  display: flex;
-  justify-content: flex-end; /* Pushes content to the right */
-  align-items: center;
-  gap: 10px; /* Adds some space between the text and button */
+/* Play button overlay */
+.card .play-button-overlay {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 50px;
+  height: 50px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
-header {
+.card:hover .play-button-overlay {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.play-button-overlay::after {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 15px solid white;
+  margin-left: 3px;
+}
+
+/* Now playing bar */
+#music-navbar-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--nav-bg);
+  z-index: 1000;
+  padding: 10px 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 20px;
-  position: relative;
+  box-shadow: 0 -2px 10px var(--shadow-color);
 }
 
-
-h1 {
-  position: relative;
-  display: inline-block;
-  padding: 10px 20px;
-  background: linear-gradient(135deg, rgba(53, 1, 1, 0.2) 25%, transparent 25%, transparent 50%, rgba(215, 204, 204, 0.2) 50%, rgba(37, 10, 80, 0.2) 75%, transparent 75%, transparent);
-  background-size: 40px 40px;
-  color: red;
-  font-size: 2rem;
-  text-align: center;
-  text-transform: uppercase;
-  border-radius: 8px;
-  z-index: 1;
-}
-
-header p {
-  font-size: 1.2rem;
-  color: #b31717;  /* Light color for readability */
-  /* background-color: #1a1a1a; */
-  margin-top: 10px;
-  text-align: center;  /* Center-align the text */
-  max-width: 80%;  /* Limit width to avoid it stretching too far */
-  line-height: 1.5;  /* Line height for better spacing */
-  font-weight: 300;  /* Lighter font weight for a relaxed look */
-}
-
-/* Fade-in effect for header section */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-h1, p {
-  animation: fadeIn 2s ease-out;
-}
-
-/* Hover Effect for theme button */
-#theme-button {
-  transition: all 0.3s ease;
-}
-
-#theme-button:hover {
-  background-color: #4d0a0c;  /* Changes to a yellowish color */
-  transform: scale(1.1); /* Slightly increases size */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);  /* Adds shadow */
-}
-
-/* 
-Pulse effect for title */
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-#music-navbar {
+#music-navbar-scroll {
   display: flex;
-  overflow-x: auto; /* Enable horizontal scrolling */
-  white-space: nowrap; /* Prevent buttons from wrapping */
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on mobile */
-  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 10px 10px 10px;
+  position: relative;
 }
 
-#music-navbar::-webkit-scrollbar {
-  display: none; /* Hide scrollbar for Chrome, Safari */
+#music-navbar-scroll::-webkit-scrollbar {
+  height: 4px;
 }
 
-#music-navbar button {
-  flex: 0 0 auto; /* Ensure buttons don't shrink */
-  margin: 5px; /* Add spacing between buttons */
-  padding: 10px 15px;
-  font-size: 16px;
+#music-navbar-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+#music-navbar-scroll::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+#music-navbar-scroll button {
+  flex: 0 0 auto;
+  margin: 0 5px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   border: none;
-  border-radius: 5px;
-  background: #444;
+  border-radius: 50px;
+  background-color: var(--secondary-color);
+  color: var(--nav-text);
+  transition: all 0.2s ease;
+}
+
+#music-navbar-scroll button:hover {
+  color: var(--text-color);
+  background-color: var(--card-hover-bg);
+  transform: scale(1.05);
+}
+
+#music-navbar-scroll button.active-button {
+  background-color:#1e3329;
   color: white;
-  transition: background 0.3s ease-in-out;
+  box-shadow: 0 0 10px rgba(29, 185, 84, 0.5);
 }
 
-#music-navbar button:hover {
-  background: #666; /* Slightly lighter on hover */
+/* Progress bar */
+#progress-container {
+  width: 100%;
+  background-color: var(--progress-bg);
+  height: 4px;
+  overflow: hidden;
 }
 
-
-/* 🔥 Hover effect for ALL buttons */
-#music-navbar button:hover {
-  transform: scale(1.1); /* Slightly enlarge */
-  filter: brightness(1.3); /* Make it brighter */
-  cursor: pointer;
-  box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.5); /* Soft glow */
+#progress-bar {
+  height: 100%;
+  width: 0;
+  background-color: var(--progress-fg);
+  transition: width 0.2s;
 }
 
-/* 🎯 Special highlight for the active button */
-
-h1 {
-  animation: pulse 1.5s infinite;
-}
+/* Floating now playing window */
 #floating-window {
   position: fixed;
-  top: 0;
-  left: 20%;
-  transform: translateX(-50%);
-  background: rgb(9, 9, 9);
-  color: rgb(127, 7, 7);
-  padding: 8px 15px;
-  border-radius: 5px;
-  font-size: 17px;
+  bottom: 70px;
+  left: 20px;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 999;
+  box-shadow: 0 4px 15px var(--shadow-color);
+  max-width: 350px;
+  width: auto;
+  transition: all 0.3s ease;
+  opacity: 0.9;
+}
+
+#floating-window:hover {
+  opacity: 1;
+  transform: translateY(-3px);
+}
+
+#floating-window #floating-song-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+}
+
+#floating-window button {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 18px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: auto;
-  white-space: nowrap;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  transition: all 0.2s;
 }
 
-
-#floating-progress-container {
-  width: 100%;
-  background-color: #444;
-  height: 10px;
-  border-radius: 5px;
-  margin-top: 10px;
+#floating-window button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
 }
 
-#floating-progress-bar {
-  height: 100%;
-  background-color: #00FF00; /* You can change this color */
-  width: 0;
-  border-radius: 5px;
+/* Theme styles - more Spotify-like */
+/* Dark Theme - Default Spotify */
+body.dark {
+  --bg-color: #121212;
+  --text-color: #FFFFFF;
+  --primary-color: #1DB954;
+  --secondary-color: #1A1A1A;
+  --card-bg: #181818;
+  --card-hover-bg: #282828;
+  --button-bg: #1DB954;
+  --button-hover: #1ED760;
+  --nav-bg: #000000;
 }
-@media (max-width: 768px) {
-  #floating-window {
-    max-height: 250px;  /* Adjust max height for smaller screens */
-    width: 200px;  /* Adjust width for smaller screens */
+
+/* Pastel Theme */
+body.pastel {
+  --bg-color: #f0e5ff;
+  --text-color: #333333;
+  --primary-color: #b19cd9;
+  --secondary-color: #ffffff;
+  --card-bg: #ffffff;
+  --card-hover-bg: #f8f4ff;
+  --button-bg: #b19cd9;
+  --button-hover: #c8b6e2;
+  --nav-bg: #e6d7ff;
+  --nav-text: #333333;
+}
+
+/* Gothic Theme */
+body.gothic {
+  --bg-color: #1e1e1e;
+  --text-color: #d8d8d8;
+  --primary-color: #800020;
+  --secondary-color: #2d2d2d;
+  --card-bg: #2d2d2d;
+  --card-hover-bg: #3d3d3d;
+  --button-bg: #800020;
+  --button-hover: #a00030;
+  --nav-bg: #0f0f0f;
+}
+
+/* Forest Theme */
+body.forest {
+  --bg-color: #1e3329;
+  --text-color: #e0ffe0;
+  --primary-color: #4ca771;
+  --secondary-color: #2d4d40;
+  --card-bg: #2d4d40;
+  --card-hover-bg: #3a6351;
+  --button-bg: #4ca771;
+  --button-hover: #5fbe86;
+  --nav-bg: #1a2b23;
+}
+
+/* Cyberpunk Theme */
+body.cyberpunk {
+  --bg-color: #0f0f2d;
+  --text-color: #f0f0ff;
+  --primary-color: #ff00ff;
+  --secondary-color: #1a1a4d;
+  --card-bg: #1a1a4d;
+  --card-hover-bg: #2a2a7d;
+  --button-bg: #ff00ff;
+  --button-hover: #ff40ff;
+  --nav-bg: #0a0a1f;
+  --progress-fg: #ff00ff;
+}
+
+/* Glassmorphism Theme */
+body.glassmorphism {
+  --bg-color: rgba(20, 20, 40, 0.8);
+  --text-color: #ffffff;
+  --primary-color: rgba(255, 255, 255, 0.8);
+  --secondary-color: rgba(255, 255, 255, 0.1);
+  --card-bg: rgba(255, 255, 255, 0.1);
+  --card-hover-bg: rgba(255, 255, 255, 0.2);
+  --button-bg: rgba(255, 255, 255, 0.2);
+  --button-hover: rgba(255, 255, 255, 0.3);
+  --nav-bg: rgba(0, 0, 0, 0.5);
+  --nav-text: rgba(255, 255, 255, 0.7);
+}
+
+/* Galaxy Theme */
+body.galaxy {
+  --bg-color: #0a0a2a;
+  --text-color: #e0e0ff;
+  --primary-color: #7742f6;
+  --secondary-color: #151540;
+  --card-bg: #151540;
+  --card-hover-bg: #252560;
+  --button-bg: #7742f6;
+  --button-hover: #8c61f8;
+  --nav-bg: #08081f;
+}
+
+/* Vintage Newspaper Theme */
+body.vintage-newspaper {
+  --bg-color: #f5f5dc;
+  --text-color: #333333;
+  --primary-color: #8b4513;
+  --secondary-color: #e8e8cd;
+  --card-bg: #e8e8cd;
+  --card-hover-bg: #dcdcb8;
+  --button-bg: #8b4513;
+  --button-hover: #a05a2c;
+  --nav-bg: #d5d5c0;
+  --nav-text: #333333;
+}
+
+/* Matrix Theme */
+body.matrix {
+  --bg-color: #000000;
+  --text-color: #00ff00;
+  --primary-color: #00ff00;
+  --secondary-color: #001100;
+  --card-bg: #001100;
+  --card-hover-bg: #002200;
+  --button-bg: #00aa00;
+  --button-hover: #00cc00;
+  --nav-bg: #000900;
+  --progress-fg: #00ff00;
+}
+
+/* Futuristic HUD Theme */
+body.futuristic-hud {
+  --bg-color: #0a192f;
+  --text-color: #64ffda;
+  --primary-color: #00bcd4;
+  --secondary-color: #162950;
+  --card-bg: #162950;
+  --card-hover-bg: #1e3a6e;
+  --button-bg: #00bcd4;
+  --button-hover: #26c6da;
+  --nav-bg: #091428;
+  --progress-fg: #00bcd4;
+}
+
+/* Desert Theme */
+body.desert {
+  --bg-color: #e1c78f;
+  --text-color: #5e3a23;
+  --primary-color: #b25f30;
+  --secondary-color: #f2dcb3;
+  --card-bg: #f2dcb3;
+  --card-hover-bg: #f7e7cb;
+  --button-bg: #b25f30;
+  --button-hover: #c67c52;
+  --nav-bg: #d9bd7e;
+  --nav-text: #5e3a23;
+}
+
+/* Custom audio controls */
+.card audio::-webkit-media-controls-panel {
+  background-color: var(--card-bg);
+}
+
+.card audio::-webkit-media-controls-current-time-display,
+.card audio::-webkit-media-controls-time-remaining-display {
+  color: var(--text-color);
+}
+
+/* Loading animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
   }
 }
 
+.loading-card {
+  background: linear-gradient(90deg,
+    var(--card-bg) 25%,
+    var(--card-hover-bg) 50%,
+    var(--card-bg) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  .card-container {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+    padding: 15px;
+  }
+  
+  #floating-window {
+    bottom: 60px;
+    padding: 8px;
+    max-width: 300px;
+  }
+  
+  header h1 {
+    font-size: 2rem;
+  }
+  
+  header p {
+    font-size: 1rem;
+  }
+  
+  #music-navbar-scroll button {
+    padding: 8px 15px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-container {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    padding: 10px;
+  }
+  
+  #floating-window {
+    left: 10px;
+    right: 10px;
+    width: calc(100% - 20px);
+    max-width: none;
+  }
+  
+  #theme-container {
+    top: 10px;
+    right: 10px;
+  }
+  
+  #music-navbar-scroll button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
