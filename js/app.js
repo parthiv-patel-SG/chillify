@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let isPlaying = false;
   let currentPlaylist = [];
   let audioCache = new Map(); // Cache for preloaded audio
+  let isCardView = true; // Track current view mode
 
   // Create the navbar dynamically
   const navbar = document.createElement("div");
@@ -32,6 +33,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const artistButtonsContainer = document.getElementById("artist-buttons");
   const progressBar = document.getElementById("progress-bar");
   const navbarScroll = document.getElementById("music-navbar-scroll");
+
+  // Create view toggle button
+  const viewToggleBtn = document.createElement("button");
+  viewToggleBtn.textContent = "List View";
+  viewToggleBtn.id = "view-toggle-btn";
+  viewToggleBtn.style.marginLeft = "auto"; // Push to the right side
+  viewToggleBtn.addEventListener("click", toggleViewMode);
+  artistButtonsContainer.appendChild(viewToggleBtn);
 
   // Create the "Explicit" button
   const explicitBtn = document.createElement("button");
@@ -80,6 +89,31 @@ document.addEventListener("DOMContentLoaded", () => {
   loadingIndicator.style.textAlign = 'center';
   document.body.appendChild(loadingIndicator);
 
+  // Function to toggle between card and list view
+  function toggleViewMode() {
+    isCardView = !isCardView;
+    viewToggleBtn.textContent = isCardView ? "List View" : "Card View";
+    
+    // Save view preference
+    localStorage.setItem('viewMode', isCardView ? 'card' : 'list');
+    
+    // Reload the current playlist with the new view
+    if (currentPlaylist.length > 0) {
+      loadSongsInBatches(currentPlaylist);
+    } else {
+      displayAllSongs();
+    }
+  }
+
+  // Load saved view preference
+  function loadViewPreference() {
+    const savedView = localStorage.getItem('viewMode');
+    if (savedView) {
+      isCardView = savedView === 'card';
+      viewToggleBtn.textContent = isCardView ? "List View" : "Card View";
+    }
+  }
+
   // Function to update progress bar
   function updateProgress(audio) {
     if (!audio) return;
@@ -97,54 +131,52 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-  // Add these functions after your existing updateProgress function
-
-// Function to enable seeking on progress bars
-function enableProgressBarSeeking() {
-  const progressContainer = document.getElementById("progress-container");
-  const floatingProgressContainer = document.getElementById("floating-progress-container");
   
-  // Add seeking functionality to main progress bar
-  if (progressContainer) {
-    progressContainer.addEventListener("click", function(e) {
-      if (!currentAudio) return;
-      
-      const percent = (e.offsetX / this.offsetWidth);
-      seekAudio(percent);
-    });
+  // Function to enable seeking on progress bars
+  function enableProgressBarSeeking() {
+    const progressContainer = document.getElementById("progress-container");
+    const floatingProgressContainer = document.getElementById("floating-progress-container");
+    
+    // Add seeking functionality to main progress bar
+    if (progressContainer) {
+      progressContainer.addEventListener("click", function(e) {
+        if (!currentAudio) return;
+        
+        const percent = (e.offsetX / this.offsetWidth);
+        seekAudio(percent);
+      });
+    }
+    
+    // Add seeking functionality to floating progress bar
+    if (floatingProgressContainer) {
+      floatingProgressContainer.addEventListener("click", function(e) {
+        if (!currentAudio) return;
+        
+        const percent = (e.offsetX / this.offsetWidth);
+        seekAudio(percent);
+      });
+    }
   }
-  
-  // Add seeking functionality to floating progress bar
-  if (floatingProgressContainer) {
-    floatingProgressContainer.addEventListener("click", function(e) {
-      if (!currentAudio) return;
-      
-      const percent = (e.offsetX / this.offsetWidth);
-      seekAudio(percent);
-    });
-  }
-}
 
-// Function to seek to a specific position in the audio
-function seekAudio(percent) {
-  if (!currentAudio || !currentAudio.duration) return;
-  
-  // Calculate the time to seek to
-  const seekTime = percent * currentAudio.duration;
-  
-  // Set audio current time to new position
-  currentAudio.currentTime = seekTime;
-  
-  // Update progress bars
-  const percentage = (seekTime / currentAudio.duration) * 100;
-  progressBar.style.width = `${percentage}%`;
-  
-  const floatingProgressBar = document.getElementById("floating-progress-bar");
-  if (floatingProgressBar) {
-    floatingProgressBar.style.width = `${percentage}%`;
+  // Function to seek to a specific position in the audio
+  function seekAudio(percent) {
+    if (!currentAudio || !currentAudio.duration) return;
+    
+    // Calculate the time to seek to
+    const seekTime = percent * currentAudio.duration;
+    
+    // Set audio current time to new position
+    currentAudio.currentTime = seekTime;
+    
+    // Update progress bars
+    const percentage = (seekTime / currentAudio.duration) * 100;
+    progressBar.style.width = `${percentage}%`;
+    
+    const floatingProgressBar = document.getElementById("floating-progress-bar");
+    if (floatingProgressBar) {
+      floatingProgressBar.style.width = `${percentage}%`;
+    }
   }
-}
-
 
   // Function to highlight active button and scroll it into view
   function highlightButton(button) {
@@ -178,12 +210,20 @@ function seekAudio(percent) {
       loadingIndicator.style.display = 'block';
       cardContainer.innerHTML = ""; // Clear container
       
+      // Set container class based on view mode
+      cardContainer.classList.remove("card-container", "list-container");
+      cardContainer.classList.add(isCardView ? "card-container" : "list-container");
+      
       function loadBatch(startIndex) {
         const endIndex = Math.min(startIndex + batchSize, totalSongs);
         
         for (let i = startIndex; i < endIndex; i++) {
-          const card = createSongCard(songsToLoad[i], i);
-          cardContainer.appendChild(card);
+          // Create appropriate item based on view mode
+          const item = isCardView 
+            ? createSongCard(songsToLoad[i], i)
+            : createSongListItem(songsToLoad[i], i);
+            
+          cardContainer.appendChild(item);
           loadedCount++;
         }
         
@@ -196,8 +236,10 @@ function seekAudio(percent) {
           setTimeout(() => loadBatch(endIndex), 10);
         } else {
           // Apply card colors and hide loading indicator
-          const currentTheme = document.body.getAttribute('data-theme') || 'pastel';
-          applyCardColors(currentTheme);
+          if (isCardView) {
+            const currentTheme = document.body.getAttribute('data-theme') || 'pastel';
+            applyCardColors(currentTheme);
+          }
           
           // Preload the next few audio files
           preloadNextAudioFiles(songsToLoad, 0, 3);
@@ -285,25 +327,123 @@ function seekAudio(percent) {
   }
 
   // Function to display explicit songs
-  async function displayExplicitSongs() {
-    const userConfirmed = window.confirm(
-      "Warning: Explicit content ahead. These songs may be harmful or inappropriate for some users. Do you wish to continue?"
-    );
-  
-    if (userConfirmed) {
-      selectedArtistTitle.innerHTML = "Explicit Songs";
-      highlightButton(explicitBtn);
-      
-      const explicitSongs = songs.filter((song) => song.explicit);
-      currentPlaylist = explicitSongs;
-      
-      await loadSongsInBatches(explicitSongs);
+// Predefined password (Change as needed)
+const explicitPassword = "9";
+
+// Function to display explicit songs
+async function displayExplicitSongs() {
+  const { value: password } = await Swal.fire({
+    title: "🕶️ Enter Access Code",
+    html: `
+      <p class="swal-message">
+        Restricted content. Enter the access code to proceed.
+      </p>
+      <div class="swal-password-container">
+        <input id="swal-input-password" type="password" class="swal-password-input" 
+          placeholder="Enter Code">
+        <span id="toggle-password" class="swal-sunglasses-icon">
+          🕶️
+        </span>
+      </div>
+    `,
+    background: "#222", // Dark background
+    color: "#fff", // Light text
+    focusConfirm: false,
+    showCancelButton: true,
+    confirmButtonText: "Confirm",
+    cancelButtonText: "Cancel",
+    customClass: {
+      confirmButton: "swal-confirm-button",
+      cancelButton: "swal-cancel-button",
+    },
+    didOpen: () => {
+      const input = document.getElementById("swal-input-password");
+      const toggle = document.getElementById("toggle-password");
+
+      toggle.addEventListener("click", () => {
+        if (input.type === "password") {
+          input.type = "text";
+          toggle.innerHTML = "😱"; // No Glasses mode
+        } else {
+          input.type = "password";
+          toggle.innerHTML = "🕶️"; // Hidden mode
+        }
+      });
+      // Listen for Enter key (keyCode 13) to trigger confirm
+input.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    const password = input.value; // Get password from input field
+    if (password === explicitPassword) {
+      Swal.fire({
+        title: "Success",
+        text: "Access Granted!",
+        icon: "success",
+        background: "#222",
+        color: "#fff",
+      }).then(() => {
+        selectedArtistTitle.innerHTML = "Explicit Songs";
+        highlightButton(explicitBtn);
+
+        const explicitSongs = songs.filter((song) => song.explicit);
+        currentPlaylist = explicitSongs;
+
+        loadSongsInBatches(explicitSongs);
+      });
     } else {
-      alert("You have canceled the explicit content display.");
+      Swal.fire({
+        title: "Access Denied",
+        text: "Incorrect Code!",
+        icon: "error",
+        background: "#222",
+        color: "#fff",
+      });
     }
   }
+});
+},
+      preConfirm: () => {
+      return document.getElementById("swal-input-password").value;
+    },
+  });
 
-  // Function to create a song card
+  if (password === explicitPassword) {
+    selectedArtistTitle.innerHTML = "Explicit Songs";
+    highlightButton(explicitBtn);
+
+    const explicitSongs = songs.filter((song) => song.explicit);
+    currentPlaylist = explicitSongs;
+
+    await loadSongsInBatches(explicitSongs);
+  } else if (password !== undefined) {
+    Swal.fire({
+      title: "Access Denied",
+      text: "Incorrect Code!",
+      icon: "error",
+      background: "#222",
+      color: "#fff",
+    });
+  }
+}
+
+// Create the "Explicit" button and attach event listener
+document.addEventListener("DOMContentLoaded", () => {
+  const explicitBtn = document.createElement("button");
+  explicitBtn.textContent = "Explicit";
+  explicitBtn.id = "explicit-btn";
+
+  const artistButtonsContainer = document.getElementById("artist-buttons-container");
+  if (!artistButtonsContainer) {
+    console.error("artistButtonsContainer not found!");
+    return;
+  }
+
+  artistButtonsContainer.appendChild(explicitBtn);
+  explicitBtn.addEventListener("click", displayExplicitSongs);
+});
+
+
+
+  // Function to create a song card (Card View)
   function createSongCard(song, index) {
     const card = document.createElement("div");
     card.classList.add("card");
@@ -354,8 +494,80 @@ function seekAudio(percent) {
     return card;
   }
   
+  // Function to create a song list item (List View)
+  function createSongListItem(song, index) {
+    const listItem = document.createElement("div");
+    listItem.classList.add("list-item");
+    listItem.dataset.index = index;
+    
+    // Find artist name
+    const artist = artists.find(a => a.artistId === song.artistId);
+    const artistName = artist ? artist.name : "Unknown Artist";
+    
+    // Create song info container
+    const songInfo = document.createElement("div");
+    songInfo.classList.add("song-info");
+    
+    // Song title
+    const songTitle = document.createElement("span");
+    songTitle.classList.add("song-title");
+    songTitle.textContent = song.title;
+    songInfo.appendChild(songTitle);
+    
+    // Artist name
+    const artistSpan = document.createElement("span");
+    artistSpan.classList.add("song-artist");
+    artistSpan.textContent = artistName;
+    songInfo.appendChild(artistSpan);
+    
+    listItem.appendChild(songInfo);
+    
+    // Play button
+    const playButton = document.createElement("button");
+    playButton.innerHTML = "▶️";
+    playButton.classList.add("list-play-button");
+    listItem.appendChild(playButton);
+    
+    // Add event listeners
+    listItem.addEventListener("click", (e) => {
+      playSong(song, index, listItem);
+    });
+    
+    // Add styles to list item
+    listItem.style.display = "flex";
+    listItem.style.justifyContent = "space-between";
+    listItem.style.alignItems = "center";
+    listItem.style.padding = "10px 15px";
+    listItem.style.margin = "8px 0";
+    listItem.style.borderRadius = "8px";
+    listItem.style.backgroundColor = "rgba(25, 25, 25, 0.6)";
+    listItem.style.cursor = "pointer";
+    listItem.style.transition = "all 0.2s ease";
+    
+    // Style song info
+    songInfo.style.display = "flex";
+    songInfo.style.flexDirection = "column";
+    
+    // Style song title
+    songTitle.style.fontSize = "16px";
+    songTitle.style.fontWeight = "bold";
+    
+    // Style artist name
+    artistSpan.style.fontSize = "14px";
+    artistSpan.style.color = "#999";
+    
+    // Style play button
+    playButton.style.backgroundColor = "transparent";
+    playButton.style.border = "none";
+    playButton.style.fontSize = "20px";
+    playButton.style.cursor = "pointer";
+    playButton.style.padding = "5px";
+    
+    return listItem;
+  }
+  
   // Function to play a song
-  function playSong(song, index, card) {
+  function playSong(song, index, element) {
     // Create or get audio element
     let audio;
     
@@ -391,7 +603,7 @@ function seekAudio(percent) {
       playPromise
         .then(() => {
           isPlaying = true;
-          updateFloatingWindow(song.title, card);
+          updateFloatingWindow(song.title, element);
           updatePlayPauseButton();
           
           // Preload next audio files
@@ -409,14 +621,26 @@ function seekAudio(percent) {
     // Set up progress bar update
     updateProgress(audio);
     
-    // Highlight the playing card
-    document.querySelectorAll(".card").forEach(c => {
-      c.style.border = "none";
-      c.style.transform = "scale(1)";
-    });
-    
-    card.style.border = "2px solid #1DB954";
-    card.style.transform = "scale(1.03)";
+    // Highlight the playing element
+    if (isCardView) {
+      // Highlight cards in card view
+      document.querySelectorAll(".card").forEach(c => {
+        c.style.border = "none";
+        c.style.transform = "scale(1)";
+      });
+      
+      element.style.border = "2px solid #1DB954";
+      element.style.transform = "scale(1.03)";
+    } else {
+      // Highlight list items in list view
+      document.querySelectorAll(".list-item").forEach(item => {
+        item.style.backgroundColor = "rgba(25, 25, 25, 0.6)";
+        item.style.borderLeft = "none";
+      });
+      
+      element.style.backgroundColor = "rgba(40, 40, 40, 0.8)";
+      element.style.borderLeft = "4px solid #1DB954";
+    }
   }
   
   // Toggle play/pause
@@ -449,12 +673,13 @@ function seekAudio(percent) {
     const nextIndex = (currentIndex + 1) % currentPlaylist.length;
     const nextSong = currentPlaylist[nextIndex];
     
-    // Find the card for the next song
-    const nextCard = document.querySelector(`.card[data-index="${nextIndex}"]`);
+    // Find the item for the next song
+    const selector = isCardView ? `.card[data-index="${nextIndex}"]` : `.list-item[data-index="${nextIndex}"]`;
+    const nextElement = document.querySelector(selector);
     
-    if (nextSong && nextCard) {
-      playSong(nextSong, nextIndex, nextCard);
-      nextCard.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (nextSong && nextElement) {
+      playSong(nextSong, nextIndex, nextElement);
+      nextElement.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }
   
@@ -465,25 +690,26 @@ function seekAudio(percent) {
     const prevIndex = (currentIndex - 1 + currentPlaylist.length) % currentPlaylist.length;
     const prevSong = currentPlaylist[prevIndex];
     
-    // Find the card for the previous song
-    const prevCard = document.querySelector(`.card[data-index="${prevIndex}"]`);
+    // Find the item for the previous song
+    const selector = isCardView ? `.card[data-index="${prevIndex}"]` : `.list-item[data-index="${prevIndex}"]`;
+    const prevElement = document.querySelector(selector);
     
-    if (prevSong && prevCard) {
-      playSong(prevSong, prevIndex, prevCard);
-      prevCard.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (prevSong && prevElement) {
+      playSong(prevSong, prevIndex, prevElement);
+      prevElement.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }
   
   // Update floating window
-  function updateFloatingWindow(songTitle, card) {
+  function updateFloatingWindow(songTitle, element) {
     const floatingWindow = document.getElementById("floating-window");
     if (!floatingWindow) return;
     
     document.getElementById("floating-song-title").textContent = `Now Playing: ${songTitle}`;
     floatingWindow.style.display = "flex";
     
-    // Store reference to current card for scrolling
-    floatingWindow.dataset.currentCardId = card.dataset.index;
+    // Store reference to current element for scrolling
+    floatingWindow.dataset.currentIndex = element.dataset.index;
     
     // Add click event to scroll to the song
     floatingWindow.addEventListener("click", (e) => {
@@ -496,9 +722,13 @@ function seekAudio(percent) {
   
   // Scroll to current song
   function scrollToCurrentSong() {
-    const currentCard = document.querySelector(`.card[data-index="${currentIndex}"]`);
-    if (currentCard) {
-      currentCard.scrollIntoView({ behavior: "smooth", block: "center" });
+    const selector = isCardView 
+      ? `.card[data-index="${currentIndex}"]` 
+      : `.list-item[data-index="${currentIndex}"]`;
+      
+    const currentElement = document.querySelector(selector);
+    if (currentElement) {
+      currentElement.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }
   
@@ -564,10 +794,55 @@ function seekAudio(percent) {
       playNextSong();
     } else if (e.code === 'ArrowLeft' && e.altKey) {
       playPreviousSong();
+    } else if (e.code === 'KeyV' && e.altKey) {
+      // Add Alt+V shortcut to toggle view
+      toggleViewMode();
     }
   });
   
+  // Add CSS for list view
+  const listViewStyle = document.createElement('style');
+  listViewStyle.textContent = `
+    .list-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 10px;
+    }
+    
+    .list-item:hover {
+      background-color: rgba(40, 40, 40, 0.8) !important;
+      transform: translateX(5px);
+    }
+    
+    /* Response to theme changes */
+    body[data-theme="pastel"] .list-item {
+      background-color: rgba(255, 230, 240, 0.5);
+      color: #333;
+    }
+    
+    body[data-theme="dark"] .list-item {
+      background-color: rgba(25, 25, 25, 0.8);
+      color: #eee;
+    }
+    
+    body[data-theme="matrix"] .list-item {
+      background-color: rgba(0, 20, 0, 0.8);
+      color: #00FF00;
+    }
+    
+    body[data-theme="cyberpunk"] .list-item {
+      background-color: rgba(20, 0, 30, 0.7);
+      color: #FF00A0;
+      border-left: 1px solid #00FFAB;
+    }
+  `;
+  document.head.appendChild(listViewStyle);
+  
   // Initialize the application
+  loadViewPreference(); // Load saved view preference
   displayAllSongs();
   enableProgressBarSeeking();
 });
