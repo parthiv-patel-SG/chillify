@@ -3,13 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
     <meta name="author" content="Parthiv" />
-
-    <title> CHILLIFY </title>
+    <title>CHILLIFY</title>
+    
+    <!-- CSS Files -->
     <link rel="stylesheet" href="./css/Cards.css" />
+    
+    <!-- SweetAlert2 CSS (optional, for better styling) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   </head>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <body>
     <header>
@@ -20,41 +22,51 @@
         <span id="current-theme">Pastel</span>
       </div>
       
-      <!-- Add search bar -->
-  <div>
-    <input type="text" id="searchBar" placeholder="Search for songs or artists..." />
-  </div>
-
+      <!-- Search bar -->
+      <div>
+        <input type="text" id="searchBar" placeholder="Search for songs or artists..." />
+      </div>
     </header>
 
     <nav id="menu">
+      <!-- Navigation will be dynamically created by domManager.js -->
     </nav>
 
     <hr />
 
     <main>
       <h2 id="selected-artist">
+        <!-- Artist title will be populated by navigationManager.js -->
       </h2>
 
       <div class="card-container">
+        <!-- Songs will be dynamically loaded here -->
       </div>
 
-      <table>
-        <thead>
-        </thead>
-        <tbody id="songs">
-        </tbody>
+      <table style="display: none;">
+        <!-- Keep this for compatibility, but hide it since we use cards/list view -->
+        <thead></thead>
+        <tbody id="songs"></tbody>
       </table>
     </main>
-    <!-- JavaScript Data Files -->
+
+    <!-- Load SweetAlert2 JavaScript FIRST (before any modules) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Load Data Files (these need to be available globally) -->
     <script src="./js/artists.js"></script>
     <script src="./js/songs.js"></script>
-
-    <!-- Main App JavaScript File -->
-    <script src="./js/app.js"></script>
+    
+    <!-- Load Main App as ES6 Module (this will load all other modules) -->
+    <script type="module" src="./js/app.js"></script>
+    
+    <!-- Optional: Debug script to check loading -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         console.log("DOM Loaded");
+        console.log("SweetAlert2 available:", typeof Swal !== 'undefined');
+        console.log("Songs data available:", typeof songs !== 'undefined');
+        console.log("Artists data available:", typeof artists !== 'undefined');
       });
     </script>
   </body>

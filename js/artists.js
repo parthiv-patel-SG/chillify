@@ -76,3 +76,5 @@ window.artists = [
 }
 
 ];
+
+window.artists = artists;
