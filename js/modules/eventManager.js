@@ -4,6 +4,8 @@ export class EventManager {
     this.audioManager = audioManager;
     this.uiManager = uiManager;
     this.navigationManager = navigationManager;
+    // Add direct reference to domManager for easier access
+    this.domManager = uiManager.domManager;
   }
 
   init() {
@@ -73,13 +75,16 @@ export class EventManager {
     const viewToggleBtn = document.getElementById("view-toggle-btn");
     if (viewToggleBtn) {
       viewToggleBtn.addEventListener("click", async () => {
+        // Toggle the view mode
         const newViewMode = this.domManager.toggleViewMode();
         
-        // Reload current context with new view
+        // Get current context songs from navigation manager
         const currentContextSongs = this.navigationManager.getCurrentContextSongs();
         if (currentContextSongs.length > 0) {
+          // Reload current context with new view
           await this.uiManager.loadSongsInBatches(currentContextSongs);
         } else {
+          // Fallback to displaying all songs if no current context
           const songs = await this.navigationManager.displayAllSongs();
           this.audioManager.setCurrentPlaylist(songs);
         }
